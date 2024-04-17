@@ -460,26 +460,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\josep\\.nuget\\packages\\": {}
+    "C:\\Users\\Telmo\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\josep\\OneDrive\\Ambiente de Trabalho\\2 SEMESTRE 2024\\DWEB\\pokedex\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
+      "projectUniqueName": "C:\\Users\\Telmo\\Desktop\\IPT\\DevWeb\\DevWeb - API\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
       "projectName": "MyPokedexAPI",
-      "projectPath": "C:\\Users\\josep\\OneDrive\\Ambiente de Trabalho\\2 SEMESTRE 2024\\DWEB\\pokedex\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
-      "packagesPath": "C:\\Users\\josep\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\josep\\OneDrive\\Ambiente de Trabalho\\2 SEMESTRE 2024\\DWEB\\pokedex\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\obj\\",
+      "projectPath": "C:\\Users\\Telmo\\Desktop\\IPT\\DevWeb\\DevWeb - API\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
+      "packagesPath": "C:\\Users\\Telmo\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Telmo\\Desktop\\IPT\\DevWeb\\DevWeb - API\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\josep\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Telmo\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -492,11 +490,6 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -531,7 +524,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

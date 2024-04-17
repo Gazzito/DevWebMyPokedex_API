@@ -32,3 +32,37 @@ C:\Users\josep\OneDrive\Ambiente de Trabalho\2 SEMESTRE 2024\DWEB\pokedex\DevWeb
 C:\Users\josep\OneDrive\Ambiente de Trabalho\2 SEMESTRE 2024\DWEB\pokedex\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.pdb
 C:\Users\josep\OneDrive\Ambiente de Trabalho\2 SEMESTRE 2024\DWEB\pokedex\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.genruntimeconfig.cache
 C:\Users\josep\OneDrive\Ambiente de Trabalho\2 SEMESTRE 2024\DWEB\pokedex\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\ref\MyPokedexAPI.dll
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\appsettings.json
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\MyPokedexAPI.exe
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\MyPokedexAPI.deps.json
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\MyPokedexAPI.runtimeconfig.json
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\MyPokedexAPI.dll
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\MyPokedexAPI.pdb
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\Microsoft.OpenApi.dll
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.csproj.AssemblyReference.cache
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.AssemblyInfoInputs.cache
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.AssemblyInfo.cs
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.csproj.CoreCompileInputs.cache
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.sourcelink.json
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\staticwebassets\msbuild.MyPokedexAPI.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\staticwebassets\msbuild.build.MyPokedexAPI.props
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.MyPokedexAPI.props
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.MyPokedexAPI.props
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\staticwebassets.pack.json
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\scopedcss\bundle\MyPokedexAPI.styles.css
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.csproj.CopyComplete
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.dll
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\refint\MyPokedexAPI.dll
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.pdb
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.genruntimeconfig.cache
+C:\Users\Telmo\Desktop\IPT\DevWeb\DevWeb - API\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\ref\MyPokedexAPI.dll
