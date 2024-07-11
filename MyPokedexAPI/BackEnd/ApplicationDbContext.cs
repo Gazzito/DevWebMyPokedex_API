@@ -62,7 +62,12 @@ modelBuilder.Entity<Pack>()
                  modelBuilder.Entity<Pack>()
             .Property(p => p.TotalBought)
             .IsRequired();
-//-------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+//--------dados obrigatorios de inserir na tabela Region--------------------------------------
+                modelBuilder.Entity<Region>()
+            .Property(p => p.Name)
+            .IsRequired();    
+//--------------------------------------------------------------------------------------------
 
 
   /* definir relações entre tabelas
