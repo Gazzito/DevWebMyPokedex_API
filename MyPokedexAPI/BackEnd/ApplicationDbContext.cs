@@ -1,18 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 
+
+
 public class ApplicationDbContext : DbContext
 {
-    /* definir tabelas
-    public DbSet<User> User { get; set; }
-    public DbSet<Region> Logins { get; set; }
-
-    public DbSet<Friendship> Friendships { get; set; }
-    public DbSet<Chat> Chats { get; set; }
-    public DbSet<Message> Messages { get; set; }
-    public DbSet<UserChat> UserChats { get; set; }
-
-    public DbSet<Post> Posts { get; set; }
-    */
+    
+    public DbSet<User> Users { get; set; }
+ 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
@@ -25,6 +19,51 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+//--------dados obrigatorios de inserir na tabela USER--------------------------------------
+            modelBuilder.Entity<User>()
+            .Property(p => p.Name)
+            .IsRequired();    
+            modelBuilder.Entity<User>()
+            .Property(p => p.Username)
+            .IsRequired();
+            modelBuilder.Entity<User>()
+            .Property(p => p.Password)
+            .IsRequired();
+            modelBuilder.Entity<User>()
+            .Property(p => p.Email)
+            .IsRequired();
+            modelBuilder.Entity<User>()
+            .Property(p => p.MobilePhone)
+            .IsRequired();
+//------------------------------------------------------------------------------------------
+//--------dados obrigatorios de inserir na tabela Pack--------------------------------------
+modelBuilder.Entity<Pack>()
+            .Property(p => p.Name)
+            .IsRequired();    
+            modelBuilder.Entity<Pack>()
+            .Property(p => p.Price)
+            .IsRequired();
+            modelBuilder.Entity<Pack>()
+            .Property(p => p.BronzeChance)
+            .IsRequired();
+            modelBuilder.Entity<Pack>()
+            .Property(p => p.SilverChance)
+            .IsRequired();
+            modelBuilder.Entity<Pack>()
+            .Property(p => p.GoldChance)
+            .IsRequired();
+              modelBuilder.Entity<Pack>()
+            .Property(p => p.PlatinumChance)
+            .IsRequired();
+              modelBuilder.Entity<Pack>()
+            .Property(p => p.DiamondChance)
+            .IsRequired();
+                 modelBuilder.Entity<Pack>()
+            .Property(p => p.TotalBought)
+            .IsRequired();
+//-------------------------------------------------------------------------------------------
+
 
   /* definir relações entre tabelas
         modelBuilder.Entity<User>()

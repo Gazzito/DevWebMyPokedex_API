@@ -1,12 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
-namespace BackEnd.Models
+public class Pack
 {
-    public class Pack
-    {
-        
-    }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+    public byte[] Image { get; set; }
+    public decimal BronzeChance { get; set; }
+    public decimal SilverChance { get; set; }
+    public decimal GoldChance { get; set; }
+    public decimal PlatinumChance { get; set; }
+    public decimal DiamondChance { get; set; }
+    public string TotalBought { get; set; }
+    public DateTime CreatedOn { get; set; }
+    public User CreateBy { get; set; }
+    public DateTime  UpdatedOn { get; set; }
+    public User  UpdatedBy { get; set; }
+
+  
 }
