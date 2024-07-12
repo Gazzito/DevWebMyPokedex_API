@@ -19,4 +19,7 @@ public class Pack
     public User  UpdatedBy { get; set; }
 
   
+       // Navigation properties
+        public ICollection<PokemonInPack> PokemonInPacks { get; set; }
+        public ICollection<PackUsers> PackUsers { get; set; }
 }

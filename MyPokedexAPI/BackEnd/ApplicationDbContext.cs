@@ -5,7 +5,16 @@
     public class ApplicationDbContext : DbContext
     {
         
-        public DbSet<User> Users { get; set; }
+        
+    public DbSet<User> User { get; set; }
+    public DbSet<Role> Role { get; set; }
+    public DbSet<User_Role> User_Role { get; set; }
+    public DbSet<Pack> Pack { get; set; }
+    public DbSet<Region> Region { get; set; }
+    public DbSet<Pokemon> Pokemon { get; set; }
+    public DbSet<UserPokemons> UserPokemons { get; set; }
+    public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<PackUsers> PackUsers { get; set; }
     
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -116,7 +125,137 @@
                 modelBuilder.Entity<Transaction>()
                 .Property(p => p.PackId)
                 .IsRequired();
-               
+//------------------------dados obrigatorio de inserir na tabela PackUsers--------------------------------
+                modelBuilder.Entity<PackUsers>()
+                .Property(p => p.UserId)
+                .IsRequired();
+                modelBuilder.Entity<PackUsers>()
+                .Property(p => p.PackId)
+                .IsRequired();
+//------------------------dados obrigatorio de inserir na tabela UserPokemons--------------------------------
+                modelBuilder.Entity<UserPokemons>()
+                .Property(p => p.UserId)
+                .IsRequired();
+                modelBuilder.Entity<UserPokemons>()
+                .Property(p => p.PokemonId)
+                .IsRequired();
+                 modelBuilder.Entity<UserPokemons>()
+                .Property(p => p.ActualAttackPoints)
+                .IsRequired();
+                modelBuilder.Entity<UserPokemons>()
+                .Property(p => p.ActualDefensePoints)
+                .IsRequired();
+                  modelBuilder.Entity<UserPokemons>()
+                .Property(p => p.ActualHealthPoints)
+                .IsRequired();
+                modelBuilder.Entity<UserPokemons>()
+                .Property(p => p.ActualSpeedPoints)
+                .IsRequired();
+                modelBuilder.Entity<UserPokemons>()
+                .Property(p => p.TotalCombatPoints)
+                .IsRequired();
+                modelBuilder.Entity<UserPokemons>()
+                .Property(p => p.Rarity)
+                .IsRequired();
+                modelBuilder.Entity<UserPokemons>()
+                .Property(p => p.IsFavourite)
+                .IsRequired();
+//------------------------dados obrigatorio de inserir na tabela PokemonInpACK--------------------------------
+                modelBuilder.Entity<PokemonInPack>()
+                .Property(p => p.PackId)
+                .IsRequired();
+                modelBuilder.Entity<PokemonInPack>()
+                .Property(p => p.PokemonId)
+                .IsRequired();
+//------------------------dados obrigatorio de inserir na tabela Rarities--------------------------------
+                 modelBuilder.Entity<Rarities>()
+                .Property(p => p.Label)
+                .IsRequired();
+                modelBuilder.Entity<Rarities>()
+                .Property(p => p.Order)
+                .IsRequired();
+                 modelBuilder.Entity<Rarities>()
+                .Property(p => p.Is_Active)
+                .IsRequired();
+//------------------------dados obrigatorio de inserir na tabela UserProfile--------------------------------
+                modelBuilder.Entity<UserProfile>()
+                .Property(p => p.Money)
+                .IsRequired();
+                 modelBuilder.Entity<UserProfile>()
+                .Property(p => p.FullName)
+                .IsRequired();
+//------------------------dados obrigatorio de inserir na tabela TotalDiamondPokemonRanking--------------------------------
+                modelBuilder.Entity<UserProfile>()
+                .Property(p => p.Money)
+                .IsRequired();
+                 modelBuilder.Entity<UserProfile>()
+                .Property(p => p.FullName)
+                .IsRequired();
+//------------------------dados obrigatorio de inserir na tabela TotalPacksOpenedRanking--------------------------------                
+                modelBuilder.Entity<TotalPacksOpenedRanking>()
+                .Property(p => p.UserId)
+                .IsRequired();
+                 modelBuilder.Entity<TotalPacksOpenedRanking>()
+                .Property(p => p.Quantity)
+                .IsRequired();
+
+
+
+
+// relacoes entre tabelas
+
+
+         modelBuilder.Entity<UserPokemons>()
+          .HasOne(p => p.CreatedBy)
+         .WithMany()
+          .HasForeignKey(p => p.CreatedBy)
+          .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<UserPokemons>()
+            .HasOne(p => p.UpdatedBy)
+         .WithMany()
+         .HasForeignKey(p => p.UpdatedBy)
+         .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Region>()
+         .HasOne(r => r.CreatedBy)
+          .WithMany()
+         .HasForeignKey(r => r.CreatedBy)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Region>()
+          .HasOne(r => r.UpdatedBy)
+          .WithMany()
+         .HasForeignKey(r => r.UpdatedBy)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Pokemon>()
+         .HasOne(p => p.CreatedBy)
+         .WithMany()
+          .HasForeignKey(p => p.CreatedBy)
+          .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Pokemon>()
+       .HasOne(p => p.UpdatedBy)
+         .WithMany()
+         .HasForeignKey(p => p.UpdatedBy)
+         .OnDelete(DeleteBehavior.Restrict);
+
+
+        modelBuilder.Entity<PackUsers>()
+            .HasOne(p => p.User)
+            .WithMany()
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<PackUsers>()
+            .HasOne(p => p.Pack)
+            .WithMany()
+            .HasForeignKey(p => p.PackId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            
+
 
 
 

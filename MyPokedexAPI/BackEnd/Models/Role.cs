@@ -8,5 +8,9 @@ public class Role{
         public bool Persistent { get; set; }
         public string Ss_Key { get; set; }
         public string Espace_Id { get; set; }
+
+
+        // Navigation properties
+        public ICollection<User_Role> User_Roles { get; set; }
     
 }

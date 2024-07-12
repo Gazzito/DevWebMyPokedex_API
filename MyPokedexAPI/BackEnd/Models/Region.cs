@@ -10,4 +10,7 @@ public class Region
     public DateTime UpdatedOn { get; set; }
     public User UpdatedBy { get; set; }
   
+
+        // Navigation properties
+        public ICollection<Pokemon> Pokemon { get; set; }
 }
