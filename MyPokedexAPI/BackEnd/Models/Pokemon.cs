@@ -11,7 +11,12 @@ using System.ComponentModel.DataAnnotations;
         public int BaseDefensePoints { get; set; }
         public int BaseSpeedPoints { get; set; }
         public DateTime CreatedOn { get; set; }
-        public User CreatedBy { get; set; }
+        public int CreatedById { get; set; }
         public DateTime UpdatedOn { get; set; }
-        public User UpdatedBy { get; set; }
+        public int UpdatedById { get; set; }
+
+        // Navigation property
+    public Region Region { get; set; }
+     public User CreatedBy { get; set; }
+    public User UpdatedBy { get; set; }
     }
