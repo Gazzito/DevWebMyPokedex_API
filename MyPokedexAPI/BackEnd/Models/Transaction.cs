@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
- 
- 
- public class User_Role
+
+public class Transaction
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public int RoleId { get; set; }
+        public int PackId { get; set; }
     }

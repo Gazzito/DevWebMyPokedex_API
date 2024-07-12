@@ -103,6 +103,19 @@
                 .IsRequired();
 //--------------------------------------------------------------------------------------------
  //--------dados obrigatorios de inserir na tabela User_Role--------------------------------------
+                modelBuilder.Entity<User_Role>()
+                .Property(p => p.UserId)
+                .IsRequired();
+                modelBuilder.Entity<User_Role>()
+                .Property(p => p.RoleId)
+                .IsRequired();
+ //------------------------dados obrigatorio de inserir na tabela Transaction--------------------------------
+                 modelBuilder.Entity<Transaction>()
+                .Property(p => p.UserId)
+                .IsRequired();
+                modelBuilder.Entity<Transaction>()
+                .Property(p => p.PackId)
+                .IsRequired();
                
 
 
