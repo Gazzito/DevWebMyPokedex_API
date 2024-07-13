@@ -23,4 +23,8 @@ public class User
   public ICollection<Region> UpdatedRegions { get; set; }
   public ICollection<UserRole> UserRoles { get; set; }
 
+  public ICollection<UserProfile> UserProfiles { get; set; }
+  public ICollection<TotalDiamondPokemonsRanking> TotalDiamondPokemonsRankings { get; set; }
+  public ICollection<TotalPacksOpenedRanking> TotalPacksOpenedRankings { get; set; }
+
 }

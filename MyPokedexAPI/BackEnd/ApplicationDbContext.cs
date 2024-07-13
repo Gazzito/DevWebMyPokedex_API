@@ -10,7 +10,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<Region> Regions { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<Role> Roles { get; set; }
-
+    public DbSet<UserProfile> UserProfiles { get; set; }
+    public DbSet<TotalDiamondPokemonsRanking> TotalDiamondPokemonsRankings { get; set; }
+    public DbSet<TotalPacksOpenedRanking> TotalPacksOpenedRankings { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
@@ -148,9 +150,72 @@ public class ApplicationDbContext : DbContext
          .Property(p => p.RoleId)
          .IsRequired();
 
+        //-----------------------------------------------User_Profile------------------------------------------------------
+
+        // Configure the relationships for UserProfile
+        modelBuilder.Entity<UserProfile>()
+            .HasOne(up => up.CreatedBy)
+            .WithMany(u => u.UserProfiles)
+            .HasForeignKey(up => up.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<UserProfile>()
+            .HasOne(up => up.UpdatedBy)
+            .WithMany()
+            .HasForeignKey(up => up.UpdatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<UserProfile>()
+        .Property(p => p.Money)
+        .IsRequired();
+
+        modelBuilder.Entity<UserProfile>()
+        .Property(p => p.FullName)
+        .IsRequired();
+
+        //-----------------------------------------------TotalDiamondPokemonsRankings------------------------------------------------------
+
+        modelBuilder.Entity<TotalDiamondPokemonsRanking>()
+                .HasOne(tdpr => tdpr.CreatedBy)
+                .WithMany(u => u.TotalDiamondPokemonsRankings)
+                .HasForeignKey(tdpr => tdpr.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<TotalDiamondPokemonsRanking>()
+            .HasOne(tdpr => tdpr.UpdatedBy)
+            .WithMany()
+            .HasForeignKey(tdpr => tdpr.UpdatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<TotalDiamondPokemonsRanking>()
+        .Property(p => p.TotalDiamondPokemons)
+        .IsRequired();
+
+        modelBuilder.Entity<TotalDiamondPokemonsRanking>()
+        .Property(p => p.Rank)
+        .IsRequired();
+        //-----------------------------------------------TotalPacksOpenedRanking------------------------------------------------------
 
 
+        modelBuilder.Entity<TotalPacksOpenedRanking>()
+        .HasOne(tpor => tpor.CreatedBy)
+        .WithMany(u => u.TotalPacksOpenedRankings)
+        .HasForeignKey(tpor => tpor.CreatedById)
+        .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<TotalPacksOpenedRanking>()
+            .HasOne(tpor => tpor.UpdatedBy)
+            .WithMany()
+            .HasForeignKey(tpor => tpor.UpdatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TotalPacksOpenedRanking>()
+             .Property(p => p.TotalPacksOpened)
+             .IsRequired();
+
+             modelBuilder.Entity<TotalPacksOpenedRanking>()
+             .Property(p => p.Rank)
+            .IsRequired();
 
 
 
