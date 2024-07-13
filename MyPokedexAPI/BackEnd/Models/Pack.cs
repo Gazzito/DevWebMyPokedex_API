@@ -8,7 +8,7 @@ public class Pack
         public int Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
-        public string Image { get; set; }
+        public byte[] Image { get; set; }
         public double BronzeChance { get; set; }
         public double SilverChance { get; set; }
         public double GoldChance { get; set; }
