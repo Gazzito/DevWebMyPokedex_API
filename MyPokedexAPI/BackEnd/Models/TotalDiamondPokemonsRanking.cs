@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+namespace MyPokedexAPI.Models{
     public class TotalDiamondPokemonsRanking
      {
         public int Id { get; set; }
@@ -17,3 +18,4 @@ using System.Threading.Tasks;
         public User CreatedBy { get; set; }
         public User UpdatedBy { get; set; }
     }
+}

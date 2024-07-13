@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+namespace MyPokedexAPI.Models{
+
 public class PackUsers
     {
         public int Id { get; set; }
@@ -15,3 +17,4 @@ public class PackUsers
         public User User { get; set; }
         public Pack Pack { get; set; }
     }
+}

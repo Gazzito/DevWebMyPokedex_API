@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
+namespace MyPokedexAPI.Models{
+
     public class Role
     {
         public int Id { get; set; }
@@ -13,3 +15,4 @@ using System.ComponentModel.DataAnnotations;
         // Navigation properties
         public ICollection<UserRole> UserRoles { get; set; }
     }
+}

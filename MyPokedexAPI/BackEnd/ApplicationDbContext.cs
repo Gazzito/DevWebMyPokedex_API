@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using MyPokedexAPI.Models;
 
-
-
+namespace MyPokedexAPI.Data{
 public class ApplicationDbContext : DbContext
 {
 
@@ -13,11 +13,11 @@ public class ApplicationDbContext : DbContext
     public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<TotalDiamondPokemonsRanking> TotalDiamondPokemonsRankings { get; set; }
     public DbSet<TotalPacksOpenedRanking> TotalPacksOpenedRankings { get; set; }
-    public DbSet<UserPokemons> UserPokemons { get; set; }   
-    public DbSet<Pack> Pack { get; set; } 
+    public DbSet<UserPokemon> UserPokemons { get; set; }   
+    public DbSet<Pack> Packs { get; set; } 
     public DbSet<PackUsers> PackUsers { get; set; } 
-    public DbSet<Transaction> Transaction { get; set; }
-    public DbSet<PokemonInPack> PokemonInPack { get; set; }
+    public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<PokemonInPack> PokemonInPacks { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
@@ -230,66 +230,66 @@ public class ApplicationDbContext : DbContext
 
          //-----------------------------------------------UserPokemons------------------------------------------------------
           // Configure the relationships for UserPokemons
-            modelBuilder.Entity<UserPokemons>()
+            modelBuilder.Entity<UserPokemon>()
                 .HasOne(up => up.User)
                 .WithMany(u => u.UserPokemons)
                 .HasForeignKey(up => up.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<UserPokemons>()
+            modelBuilder.Entity<UserPokemon>()
                 .HasOne(up => up.Pokemon)
                 .WithMany()
                 .HasForeignKey(up => up.PokemonId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<UserPokemons>()
+            modelBuilder.Entity<UserPokemon>()
                 .HasOne(up => up.CreatedBy)
                 .WithMany()
                 .HasForeignKey(up => up.CreatedById)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<UserPokemons>()
+            modelBuilder.Entity<UserPokemon>()
                 .HasOne(up => up.UpdatedBy)
                 .WithMany()
                 .HasForeignKey(up => up.UpdatedById)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Configure the enum mapping for Rarities
-            modelBuilder.Entity<UserPokemons>()
+            modelBuilder.Entity<UserPokemon>()
                 .Property(up => up.Rarity)
                 .HasConversion<string>();
           
           // Mandatory Fields
           
-          modelBuilder.Entity<UserPokemons>()
+          modelBuilder.Entity<UserPokemon>()
              .Property(p => p.UserId)
              .IsRequired();
 
-             modelBuilder.Entity<UserPokemons>()
+             modelBuilder.Entity<UserPokemon>()
              .Property(p => p.PokemonId)
              .IsRequired();
 
-             modelBuilder.Entity<UserPokemons>()
+             modelBuilder.Entity<UserPokemon>()
              .Property(p => p.ActualAttackPoints)
              .IsRequired();
 
-             modelBuilder.Entity<UserPokemons>()
+             modelBuilder.Entity<UserPokemon>()
              .Property(p => p.ActualDefensePoints)
              .IsRequired();
 
-             modelBuilder.Entity<UserPokemons>()
+             modelBuilder.Entity<UserPokemon>()
              .Property(p => p.ActualHealthPoints)
              .IsRequired();
 
-             modelBuilder.Entity<UserPokemons>()
+             modelBuilder.Entity<UserPokemon>()
              .Property(p => p.ActualSpeedPoints)
              .IsRequired();
 
-             modelBuilder.Entity<UserPokemons>()
+             modelBuilder.Entity<UserPokemon>()
              .Property(p => p.TotalCombatPoints)
              .IsRequired();
 
-             modelBuilder.Entity<UserPokemons>()
+             modelBuilder.Entity<UserPokemon>()
              .Property(p => p.Rarity)
              .IsRequired();
 
@@ -417,4 +417,5 @@ public class ApplicationDbContext : DbContext
 
 
 
+}
 }
