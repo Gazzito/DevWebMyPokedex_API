@@ -4596,11 +4596,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\josep\\PokedexAPI\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
+      "projectUniqueName": "C:\\Users\\josep\\DevWeb\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
       "projectName": "MyPokedexAPI",
-      "projectPath": "C:\\Users\\josep\\PokedexAPI\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
+      "projectPath": "C:\\Users\\josep\\DevWeb\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
       "packagesPath": "C:\\Users\\josep\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\josep\\PokedexAPI\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\obj\\",
+      "outputPath": "C:\\Users\\josep\\DevWeb\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\josep\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyPokedexAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240712232004_createUser_Role_UserRole")]
+    [Migration("20240713001258_createUser_Role_UserRole")]
     partial class createUser_Role_UserRole
     {
         /// <inheritdoc />

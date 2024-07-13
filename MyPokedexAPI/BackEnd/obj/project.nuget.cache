@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Ioq698KkoMuobU4qWSKTylbV/g8inYpaEWZzhT/Y5ht9j5L7m3eya/sJwkLS3TjeSwYGwaFt1ELoWS2UDRZ7HA==",
+  "dgSpecHash": "c1gN6N45G8L0d3wKLXarFBtT9Kc/QVcOP9tLzwE2n2QTMaW8vgAFOhvbYgZdp3Q6XpdCZOz6qJ46O/lmjwWJAA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\josep\\PokedexAPI\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
+  "projectFilePath": "C:\\Users\\josep\\DevWeb\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\josep\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\josep\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

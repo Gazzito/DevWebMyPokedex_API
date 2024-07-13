@@ -15,7 +15,4 @@ public class Region
         public User CreatedBy { get; set; }
     public User UpdatedBy { get; set; }
   
-
-        // Navigation properties
-        public ICollection<Pokemon> Pokemon { get; set; }
 }
