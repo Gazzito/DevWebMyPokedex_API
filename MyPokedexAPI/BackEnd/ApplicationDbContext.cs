@@ -13,6 +13,11 @@ public class ApplicationDbContext : DbContext
     public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<TotalDiamondPokemonsRanking> TotalDiamondPokemonsRankings { get; set; }
     public DbSet<TotalPacksOpenedRanking> TotalPacksOpenedRankings { get; set; }
+    public DbSet<UserPokemons> UserPokemons { get; set; }   
+    public DbSet<Pack> Pack { get; set; } 
+    public DbSet<PackUsers> PackUsers { get; set; } 
+    public DbSet<Transaction> Transaction { get; set; }
+    public DbSet<PokemonInPack> PokemonInPack { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
@@ -165,6 +170,8 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(up => up.UpdatedById)
             .OnDelete(DeleteBehavior.Restrict);
 
+            // Mandatory Fields
+
         modelBuilder.Entity<UserProfile>()
         .Property(p => p.Money)
         .IsRequired();
@@ -186,6 +193,8 @@ public class ApplicationDbContext : DbContext
             .WithMany()
             .HasForeignKey(tdpr => tdpr.UpdatedById)
             .OnDelete(DeleteBehavior.Restrict);
+
+            // Mandatory Fields
 
         modelBuilder.Entity<TotalDiamondPokemonsRanking>()
         .Property(p => p.TotalDiamondPokemons)
@@ -209,6 +218,8 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(tpor => tpor.UpdatedById)
             .OnDelete(DeleteBehavior.Restrict);
 
+            // Mandatory Fields
+
             modelBuilder.Entity<TotalPacksOpenedRanking>()
              .Property(p => p.TotalPacksOpened)
              .IsRequired();
@@ -217,203 +228,188 @@ public class ApplicationDbContext : DbContext
              .Property(p => p.Rank)
             .IsRequired();
 
+         //-----------------------------------------------UserPokemons------------------------------------------------------
+          // Configure the relationships for UserPokemons
+            modelBuilder.Entity<UserPokemons>()
+                .HasOne(up => up.User)
+                .WithMany(u => u.UserPokemons)
+                .HasForeignKey(up => up.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserPokemons>()
+                .HasOne(up => up.Pokemon)
+                .WithMany()
+                .HasForeignKey(up => up.PokemonId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserPokemons>()
+                .HasOne(up => up.CreatedBy)
+                .WithMany()
+                .HasForeignKey(up => up.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserPokemons>()
+                .HasOne(up => up.UpdatedBy)
+                .WithMany()
+                .HasForeignKey(up => up.UpdatedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure the enum mapping for Rarities
+            modelBuilder.Entity<UserPokemons>()
+                .Property(up => up.Rarity)
+                .HasConversion<string>();
+          
+          // Mandatory Fields
+          
+          modelBuilder.Entity<UserPokemons>()
+             .Property(p => p.UserId)
+             .IsRequired();
+
+             modelBuilder.Entity<UserPokemons>()
+             .Property(p => p.PokemonId)
+             .IsRequired();
+
+             modelBuilder.Entity<UserPokemons>()
+             .Property(p => p.ActualAttackPoints)
+             .IsRequired();
+
+             modelBuilder.Entity<UserPokemons>()
+             .Property(p => p.ActualDefensePoints)
+             .IsRequired();
+
+             modelBuilder.Entity<UserPokemons>()
+             .Property(p => p.ActualHealthPoints)
+             .IsRequired();
+
+             modelBuilder.Entity<UserPokemons>()
+             .Property(p => p.ActualSpeedPoints)
+             .IsRequired();
+
+             modelBuilder.Entity<UserPokemons>()
+             .Property(p => p.TotalCombatPoints)
+             .IsRequired();
+
+             modelBuilder.Entity<UserPokemons>()
+             .Property(p => p.Rarity)
+             .IsRequired();
+
+             //-----------------------------------------------Pack------------------------------------------------------
+
+            modelBuilder.Entity<Pack>()
+                .HasOne(p => p.CreatedBy)
+                .WithMany()
+                .HasForeignKey(p => p.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Pack>()
+                .HasOne(p => p.UpdatedBy)
+                .WithMany()
+                .HasForeignKey(p => p.UpdatedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Pack>()
+             .Property(p => p.Name)
+             .IsRequired();
+
+             modelBuilder.Entity<Pack>()
+             .Property(p => p.Price)
+             .IsRequired();
+
+             modelBuilder.Entity<Pack>()
+             .Property(p => p.Image)
+             .IsRequired();
+
+             modelBuilder.Entity<Pack>()
+             .Property(p => p.BronzeChance)
+             .IsRequired();
+
+             modelBuilder.Entity<Pack>()
+             .Property(p => p.SilverChance)
+             .IsRequired();
+
+             modelBuilder.Entity<Pack>()
+             .Property(p => p.GoldChance)
+             .IsRequired();
 
+             modelBuilder.Entity<Pack>()
+             .Property(p => p.PlatinumChance)
+             .IsRequired();
 
+             modelBuilder.Entity<Pack>()
+             .Property(p => p.DiamondChance)
+             .IsRequired();
 
+            //-----------------------------------------------PackUsers------------------------------------------------------
+            modelBuilder.Entity<PackUsers>()
+                .HasOne(pu => pu.User)
+                .WithMany(u => u.PackUsers)
+                .HasForeignKey(pu => pu.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<PackUsers>()
+                .HasOne(pu => pu.Pack)
+                .WithMany(p => p.PackUsers)
+                .HasForeignKey(pu => pu.PackId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<PackUsers>()
+             .Property(p => p.UserId)
+             .IsRequired();
 
+            modelBuilder.Entity<PackUsers>()
+             .Property(p => p.PackId)
+             .IsRequired();
 
+             
 
+            //-----------------------------------------------Transaction------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //------------------------------------------------------------------------------------------
-        //--------dados obrigatorios de inserir na tabela Pack--------------------------------------
-        /*  modelBuilder.Entity<Pack>()
-                      .Property(p => p.Name)
-                      .IsRequired();    
-                      modelBuilder.Entity<Pack>()
-                      .Property(p => p.Price)
-                      .IsRequired();
-                      modelBuilder.Entity<Pack>()
-                      .Property(p => p.BronzeChance)
-                      .IsRequired();
-                      modelBuilder.Entity<Pack>()
-                      .Property(p => p.SilverChance)
-                      .IsRequired();
-                      modelBuilder.Entity<Pack>()
-                      .Property(p => p.GoldChance)
-                      .IsRequired();
-                      modelBuilder.Entity<Pack>()
-                      .Property(p => p.PlatinumChance)
-                      .IsRequired();
-                      modelBuilder.Entity<Pack>()
-                      .Property(p => p.DiamondChance)
-                      .IsRequired();
-                          modelBuilder.Entity<Pack>()
-                      .Property(p => p.TotalBought)
-                      .IsRequired(); */
-        //--------------------------------------------------------------------------------------------
-        //--------------------------------------------------------------------------------------------
-        //--------dados obrigatorios de inserir na tabela Role--------------------------------------
-        /*    modelBuilder.Entity<Role>()
-            .Property(p => p.Name)
-            .IsRequired();
-            modelBuilder.Entity<Role>()
-            .Property(p => p.Persistent)
-            .IsRequired();
-            modelBuilder.Entity<Role>()
-            .Property(p => p.Ss_Key)
-            .IsRequired();
-             modelBuilder.Entity<Role>()
-            .Property(p => p.Espace_Id)
-            .IsRequired();
-//--------------------------------------------------------------------------------------------
-//--------dados obrigatorios de inserir na tabela User_Role--------------------------------------
-            modelBuilder.Entity<User_Role>()
-            .Property(p => p.UserId)
-            .IsRequired();
-            modelBuilder.Entity<User_Role>()
-            .Property(p => p.RoleId)
-            .IsRequired();
-//------------------------dados obrigatorio de inserir na tabela Transaction--------------------------------
-             modelBuilder.Entity<Transaction>()
-            .Property(p => p.UserId)
-            .IsRequired();
             modelBuilder.Entity<Transaction>()
-            .Property(p => p.PackId)
-            .IsRequired();
+                .HasOne(t => t.User)
+                .WithMany(u => u.Transactions)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Pack)
+                .WithMany(p => p.Transactions)
+                .HasForeignKey(t => t.PackId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Transaction>()
+             .Property(p => p.UserId)
+             .IsRequired();
 
-/* definir relações entre tabelas
-    modelBuilder.Entity<User>()
-        .HasIndex(u => u.Email)
-        .IsUnique();
+            modelBuilder.Entity<Transaction>()
+             .Property(p => p.PackId)
+             .IsRequired();
 
-     modelBuilder.Entity<Login>()
-        .HasIndex(l => l.Username)
-        .IsUnique();
+            //-----------------------------------------------PokemonInPack------------------------------------------------------
 
-    modelBuilder.Entity<User>()
-        .HasOne(u => u.Login)
-        .WithOne(l => l.User)
-        .HasForeignKey<Login>(l => l.UserId);
+        modelBuilder.Entity<PokemonInPack>()
+                .HasOne(pip => pip.Pack)
+                .WithMany(p => p.PokemonInPacks)
+                .HasForeignKey(pip => pip.PackId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<PokemonInPack>()
+                .HasOne(pip => pip.Pokemon)
+                .WithMany()
+                .HasForeignKey(pip => pip.PokemonId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<PokemonInPack>()
+                .HasOne(pip => pip.CreatedBy)
+                .WithMany(u => u.PokemonInPacksCreated)
+                .HasForeignKey(pip => pip.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
 
-    modelBuilder.Entity<Friendship>()
-    .HasOne(f => f.User)
-    .WithMany(u => u.Friendships)
-    .HasForeignKey(f => f.CreatedBy)
-    .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<PokemonInPack>()
+                .HasOne(pip => pip.UpdatedBy)
+                .WithMany(u => u.PokemonInPacksUpdated)
+                .HasForeignKey(pip => pip.UpdatedById)
+                .OnDelete(DeleteBehavior.Restrict);
 
-// Add a unique constraint for the combination of USERID and FRIENDID
-    modelBuilder.Entity<Friendship>()
-        .HasIndex(f => new { f.CreatedBy, f.FriendId })
-        .IsUnique();
-
-
-modelBuilder.Entity<Post>()
-        .HasOne(p => p.User)
-        .WithMany(u => u.Posts)
-        .HasForeignKey(p => p.CreatedBy);
-
-    modelBuilder.Entity<UserChat>()
-    .HasKey(uc => new { uc.UserID, uc.ChatID });
-
-modelBuilder.Entity<UserChat>()
-    .HasOne(uc => uc.User)
-    .WithMany(u => u.UserChats)
-    .HasForeignKey(uc => uc.UserID);
-
-modelBuilder.Entity<UserChat>()
-    .HasOne(uc => uc.Chat)
-    .WithMany(c => c.UserChats)
-    .HasForeignKey(uc => uc.ChatID);
-
-modelBuilder.Entity<Message>()
-    .HasOne(m => m.User)
-    .WithMany(u => u.Messages)
-    .HasForeignKey(m => m.UserID);
-
-modelBuilder.Entity<Message>()
-    .HasOne(m => m.Chat)
-    .WithMany(c => c.Messages)
-    .HasForeignKey(m => m.ChatID);    
-*/
     }
 
 

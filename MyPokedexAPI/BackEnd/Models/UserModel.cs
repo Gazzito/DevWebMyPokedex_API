@@ -26,5 +26,11 @@ public class User
   public ICollection<UserProfile> UserProfiles { get; set; }
   public ICollection<TotalDiamondPokemonsRanking> TotalDiamondPokemonsRankings { get; set; }
   public ICollection<TotalPacksOpenedRanking> TotalPacksOpenedRankings { get; set; }
+  public ICollection<UserPokemons> UserPokemons { get; set; }
+  public ICollection<Transaction> Transactions { get; set; }
+  public ICollection<PackUsers> PackUsers { get; set; }
 
+         public ICollection<PokemonInPack> PokemonInPacksCreated { get; set; }
+        public ICollection<PokemonInPack> PokemonInPacksUpdated { get; set; }
+  
 }

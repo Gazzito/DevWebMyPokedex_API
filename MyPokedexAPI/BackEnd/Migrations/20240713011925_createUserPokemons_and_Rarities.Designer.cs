@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyPokedexAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240713011925_createUserPokemons_and_Rarities")]
+    partial class createUserPokemons_and_Rarities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,93 +23,6 @@ namespace MyPokedexAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Pack", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("BronzeChance")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("CreatedById")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<double>("DiamondChance")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("GoldChance")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<double>("PlatinumChance")
-                        .HasColumnType("double precision");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<double>("SilverChance")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("TotalBought")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UpdatedById")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("Pack");
-                });
-
-            modelBuilder.Entity("PackUsers", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("NextOpenExpected")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("OpenedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("PackId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PackId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PackUsers");
-                });
 
             modelBuilder.Entity("Pokemon", b =>
                 {
@@ -156,45 +72,6 @@ namespace MyPokedexAPI.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("Pokemons");
-                });
-
-            modelBuilder.Entity("PokemonInPack", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CreatedById")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("PackId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PokemonId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UpdatedById")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("PackId");
-
-                    b.HasIndex("PokemonId");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("PokemonInPack");
                 });
 
             modelBuilder.Entity("Region", b =>
@@ -328,29 +205,6 @@ namespace MyPokedexAPI.Migrations
                     b.HasIndex("UpdatedById");
 
                     b.ToTable("TotalPacksOpenedRankings");
-                });
-
-            modelBuilder.Entity("Transaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PackId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PackId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Transaction");
                 });
 
             modelBuilder.Entity("User", b =>
@@ -518,44 +372,6 @@ namespace MyPokedexAPI.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("Pack", b =>
-                {
-                    b.HasOne("User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("PackUsers", b =>
-                {
-                    b.HasOne("Pack", "Pack")
-                        .WithMany("PackUsers")
-                        .HasForeignKey("PackId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("User", "User")
-                        .WithMany("PackUsers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Pack");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Pokemon", b =>
                 {
                     b.HasOne("User", "CreatedBy")
@@ -579,41 +395,6 @@ namespace MyPokedexAPI.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("Region");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("PokemonInPack", b =>
-                {
-                    b.HasOne("User", "CreatedBy")
-                        .WithMany("PokemonInPacksCreated")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Pack", "Pack")
-                        .WithMany("PokemonInPacks")
-                        .HasForeignKey("PackId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Pokemon", "Pokemon")
-                        .WithMany()
-                        .HasForeignKey("PokemonId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("User", "UpdatedBy")
-                        .WithMany("PokemonInPacksUpdated")
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Pack");
-
-                    b.Navigation("Pokemon");
 
                     b.Navigation("UpdatedBy");
                 });
@@ -673,25 +454,6 @@ namespace MyPokedexAPI.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("Transaction", b =>
-                {
-                    b.HasOne("Pack", "Pack")
-                        .WithMany("Transactions")
-                        .HasForeignKey("PackId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("User", "User")
-                        .WithMany("Transactions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Pack");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("UserPokemons", b =>
@@ -767,15 +529,6 @@ namespace MyPokedexAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Pack", b =>
-                {
-                    b.Navigation("PackUsers");
-
-                    b.Navigation("PokemonInPacks");
-
-                    b.Navigation("Transactions");
-                });
-
             modelBuilder.Entity("Region", b =>
                 {
                     b.Navigation("Pokemons");
@@ -792,17 +545,9 @@ namespace MyPokedexAPI.Migrations
 
                     b.Navigation("CreatedRegions");
 
-                    b.Navigation("PackUsers");
-
-                    b.Navigation("PokemonInPacksCreated");
-
-                    b.Navigation("PokemonInPacksUpdated");
-
                     b.Navigation("TotalDiamondPokemonsRankings");
 
                     b.Navigation("TotalPacksOpenedRankings");
-
-                    b.Navigation("Transactions");
 
                     b.Navigation("UpdatedPokemons");
 
