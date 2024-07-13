@@ -7,11 +7,11 @@ namespace MyPokedexAPI.Models{
 
 public enum Rarity
 {
-    BronzeChance,
-    SilverChance,
-    GoldChance,
-    PlatinumChance,
-    DiamondChance
+    Bronze,
+    Silver,
+    Gold,
+    Platinum,
+    Diamond
 }
 
 }

@@ -4,7 +4,6 @@ using MyPokedexAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
 
 namespace MyPokedexAPI.Controllers
 {
@@ -22,7 +21,20 @@ namespace MyPokedexAPI.Controllers
         [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .Select(u => new UserDTO
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Username = u.Username,
+                    Password = u.Password,
+                    Email = u.Email,
+                    CreationDate = u.CreationDate,
+                    LastLogin = u.LastLogin,
+                    IsActive = u.IsActive
+                })
+                .ToListAsync();
+
             return Ok(users);
         }
 
@@ -41,10 +53,9 @@ namespace MyPokedexAPI.Controllers
                 Username = userDto.Username,
                 Password = userDto.Password,
                 Email = userDto.Email,
-                MobilePhone = userDto.MobilePhone,
-                Creation_Date = DateTime.SpecifyKind(userDto.Creation_Date, DateTimeKind.Utc),
-                Last_Login = DateTime.SpecifyKind(userDto.Last_Login, DateTimeKind.Utc),
-                Is_Active = userDto.Is_Active
+                CreationDate = DateTime.SpecifyKind(userDto.CreationDate, DateTimeKind.Utc),
+                LastLogin = userDto.LastLogin.HasValue ? DateTime.SpecifyKind(userDto.LastLogin.Value, DateTimeKind.Utc) : (DateTime?)null,
+                IsActive = userDto.IsActive
             };
 
             if (user.Id == 0)
@@ -63,16 +74,15 @@ namespace MyPokedexAPI.Controllers
                 existingUser.Username = user.Username;
                 existingUser.Password = user.Password;
                 existingUser.Email = user.Email;
-                existingUser.MobilePhone = user.MobilePhone;
-                existingUser.Creation_Date = user.Creation_Date;
-                existingUser.Last_Login = user.Last_Login;
-                existingUser.Is_Active = user.Is_Active;
+                existingUser.CreationDate = user.CreationDate;
+                existingUser.LastLogin = user.LastLogin;
+                existingUser.IsActive = user.IsActive;
 
                 _context.Users.Update(existingUser);
             }
 
             await _context.SaveChangesAsync();
-            return Ok(user);
+            return Ok(userDto);
         }
 
         [HttpDelete("DeleteUser/{id}")]

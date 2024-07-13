@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-var connectionString = "Host=localhost;Database=MyPokedex;Username=postgres;Password=Vodafone;";
+var connectionString = "Host=localhost;Database=MyPokedex;Username=postgres;Password=omfgnoob24413";
 builder.Services.AddDbContext<ApplicationDbContext>(options=>
 options.UseNpgsql(connectionString));
 var app = builder.Build();

@@ -4,7 +4,6 @@ using MyPokedexAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
 
 namespace MyPokedexAPI.Controllers
 {
@@ -18,25 +17,41 @@ namespace MyPokedexAPI.Controllers
         {
             _context = context;
         }
-[HttpGet("GetAllPaginatedPokemonsWithPaginationAndSearch")]
-public async Task<IActionResult> GetAllPaginatedPokemonsWithPaginationAndSearch(int page, int maxRecords, string searchKeyword)
-{
-    var query = _context.Pokemons.AsQueryable();
 
-    if (!string.IsNullOrEmpty(searchKeyword))
-    {
-        searchKeyword = searchKeyword.Trim().ToLower();
-        query = query.Where(p => p.Name.ToLower().Contains(searchKeyword));
-    }
+        [HttpGet("GetAllPaginatedPokemonsWithPaginationAndSearch")]
+        public async Task<IActionResult> GetAllPaginatedPokemonsWithPaginationAndSearch(int page, int maxRecords, string searchKeyword)
+        {
+            var query = _context.Pokemons.AsQueryable();
 
-    var totalPokemons = await query.CountAsync();
-    var pokemons = await query
-        .Skip((page - 1) * maxRecords)
-        .Take(maxRecords)
-        .ToListAsync();
+            if (!string.IsNullOrEmpty(searchKeyword))
+            {
+                searchKeyword = searchKeyword.Trim().ToLower();
+                query = query.Where(p => p.Name.ToLower().Contains(searchKeyword));
+            }
 
-    return Ok(new { totalPokemons, pokemons });
-}
+            var totalPokemons = await query.CountAsync();
+            var pokemons = await query
+                .Skip((page - 1) * maxRecords)
+                .Take(maxRecords)
+                .Select(p => new PokemonDTO
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    RegionId = p.RegionId,
+                    BaseAttackPoints = p.BaseAttackPoints,
+                    BaseHealthPoints = p.BaseHealthPoints,
+                    BaseDefensePoints = p.BaseDefensePoints,
+                    BaseSpeedPoints = p.BaseSpeedPoints,
+                    CreatedOn = p.CreatedOn,
+                    CreatedBy = p.CreatedBy,
+                    UpdatedOn = p.UpdatedOn,
+                    UpdatedBy = p.UpdatedBy,
+                    Image = p.Image != null ? Convert.ToBase64String(p.Image) : null
+                })
+                .ToListAsync();
+
+            return Ok(new { totalPokemons, pokemons });
+        }
 
         [HttpPost("CreateOrUpdatePokemon")]
         public async Task<IActionResult> CreateOrUpdatePokemon([FromBody] PokemonDTO pokemonDto)
@@ -56,10 +71,10 @@ public async Task<IActionResult> GetAllPaginatedPokemonsWithPaginationAndSearch(
                 BaseDefensePoints = pokemonDto.BaseDefensePoints,
                 BaseSpeedPoints = pokemonDto.BaseSpeedPoints,
                 CreatedOn = DateTime.SpecifyKind(pokemonDto.CreatedOn, DateTimeKind.Utc),
-                CreatedById = pokemonDto.CreatedById,
-                UpdatedOn = DateTime.SpecifyKind(pokemonDto.UpdatedOn, DateTimeKind.Utc),
-                UpdatedById = pokemonDto.UpdatedById,
-                Image = !string.IsNullOrEmpty(pokemonDto.ImageBase64) ? Convert.FromBase64String(pokemonDto.ImageBase64) : null
+                CreatedBy = pokemonDto.CreatedBy,
+                UpdatedOn = pokemonDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(pokemonDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
+                UpdatedBy = pokemonDto.UpdatedBy,
+                Image = !string.IsNullOrEmpty(pokemonDto.Image) ? Convert.FromBase64String(pokemonDto.Image) : null
             };
 
             if (pokemon.Id == 0)
@@ -81,16 +96,16 @@ public async Task<IActionResult> GetAllPaginatedPokemonsWithPaginationAndSearch(
                 existingPokemon.BaseDefensePoints = pokemon.BaseDefensePoints;
                 existingPokemon.BaseSpeedPoints = pokemon.BaseSpeedPoints;
                 existingPokemon.CreatedOn = pokemon.CreatedOn;
-                existingPokemon.CreatedById = pokemon.CreatedById;
+                existingPokemon.CreatedBy = pokemon.CreatedBy;
                 existingPokemon.UpdatedOn = pokemon.UpdatedOn;
-                existingPokemon.UpdatedById = pokemon.UpdatedById;
+                existingPokemon.UpdatedBy = pokemon.UpdatedBy;
                 existingPokemon.Image = pokemon.Image;
 
                 _context.Pokemons.Update(existingPokemon);
             }
 
             await _context.SaveChangesAsync();
-            return Ok(pokemon);
+            return Ok(pokemonDto);
         }
 
         [HttpDelete("DeletePokemon/{id}")]
@@ -108,10 +123,7 @@ public async Task<IActionResult> GetAllPaginatedPokemonsWithPaginationAndSearch(
             return Ok();
         }
 
-
-
-            // PARA TESTAR //
-           [HttpPost("GetMoneyFromPokemon")]
+        [HttpPost("GetMoneyFromPokemon")]
         public async Task<IActionResult> GetMoneyFromPokemon(int userId, int pokemonId, Rarity pokemonRarity)
         {
             // Find the UserPokemon record
@@ -141,7 +153,7 @@ public async Task<IActionResult> GetAllPaginatedPokemonsWithPaginationAndSearch(
             if (pokemonRarity == Rarity.Diamond)
             {
                 var totalDiamondPokemonsRanking = await _context.TotalDiamondPokemonsRankings
-                    .FirstOrDefaultAsync(t => t.UserId == userId);
+                    .FirstOrDefaultAsync(t => t.Id == userId);
 
                 if (totalDiamondPokemonsRanking != null)
                 {
@@ -156,7 +168,5 @@ public async Task<IActionResult> GetAllPaginatedPokemonsWithPaginationAndSearch(
             // Return the sale price
             return Ok(new { SalePrice = salePrice });
         }
-
-
     }
 }

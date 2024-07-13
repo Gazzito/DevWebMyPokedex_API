@@ -22,7 +22,18 @@ namespace MyPokedexAPI.Controllers
         [HttpGet("GetAllRegions")]
         public async Task<IActionResult> GetAllRegions()
         {
-            var regions = await _context.Regions.ToListAsync();
+            var regions = await _context.Regions
+                .Select(r => new RegionDTO
+                {
+                    Id = r.Id,
+                    Name = r.Name,
+                    CreatedOn = r.CreatedOn,
+                    CreatedBy = r.CreatedBy,
+                    UpdatedOn = r.UpdatedOn,
+                    UpdatedBy = r.UpdatedBy
+                })
+                .ToListAsync();
+
             return Ok(regions);
         }
 
@@ -39,9 +50,9 @@ namespace MyPokedexAPI.Controllers
                 Id = regionDto.Id,
                 Name = regionDto.Name,
                 CreatedOn = DateTime.SpecifyKind(regionDto.CreatedOn, DateTimeKind.Utc),
-                CreatedById = regionDto.CreatedById,
-                UpdatedOn = DateTime.SpecifyKind(regionDto.UpdatedOn, DateTimeKind.Utc),
-                UpdatedById = regionDto.UpdatedById
+                CreatedBy = regionDto.CreatedBy,
+                UpdatedOn = regionDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(regionDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
+                UpdatedBy = regionDto.UpdatedBy
             };
 
             if (region.Id == 0)
@@ -58,15 +69,15 @@ namespace MyPokedexAPI.Controllers
 
                 existingRegion.Name = region.Name;
                 existingRegion.CreatedOn = region.CreatedOn;
-                existingRegion.CreatedById = region.CreatedById;
+                existingRegion.CreatedBy = region.CreatedBy;
                 existingRegion.UpdatedOn = region.UpdatedOn;
-                existingRegion.UpdatedById = region.UpdatedById;
+                existingRegion.UpdatedBy = region.UpdatedBy;
 
                 _context.Regions.Update(existingRegion);
             }
 
             await _context.SaveChangesAsync();
-            return Ok(region);
+            return Ok(regionDto);
         }
 
         [HttpDelete("DeleteRegion/{id}")]

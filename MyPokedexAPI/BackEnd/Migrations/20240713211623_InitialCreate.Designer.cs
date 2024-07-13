@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyPokedexAPI.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyPokedexAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240713211623_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -409,9 +412,6 @@ namespace MyPokedexAPI.Migrations
                     b.Property<bool>("IsFavourite")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("PackId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("PokemonId")
                         .HasColumnType("integer");
 
@@ -431,17 +431,20 @@ namespace MyPokedexAPI.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("UserPackId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedBy");
-
-                    b.HasIndex("PackId");
 
                     b.HasIndex("PokemonId");
 
                     b.HasIndex("UpdatedBy");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserPackId");
 
                     b.ToTable("UserPokemons");
                 });
@@ -689,16 +692,10 @@ namespace MyPokedexAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyPokedexAPI.Models.Pack", "Pack")
-                        .WithMany("UserPokemons")
-                        .HasForeignKey("PackId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MyPokedexAPI.Models.Pokemon", "Pokemon")
                         .WithMany("UserPokemons")
                         .HasForeignKey("PokemonId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyPokedexAPI.Models.User", "UpdatedByUser")
@@ -712,15 +709,21 @@ namespace MyPokedexAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CreatedByUser");
+                    b.HasOne("MyPokedexAPI.Models.PackUsers", "UserPack")
+                        .WithMany()
+                        .HasForeignKey("UserPackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Pack");
+                    b.Navigation("CreatedByUser");
 
                     b.Navigation("Pokemon");
 
                     b.Navigation("UpdatedByUser");
 
                     b.Navigation("User");
+
+                    b.Navigation("UserPack");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.UserProfile", b =>
@@ -772,8 +775,6 @@ namespace MyPokedexAPI.Migrations
                     b.Navigation("PackUsers");
 
                     b.Navigation("PokemonInPacks");
-
-                    b.Navigation("UserPokemons");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.Pokemon", b =>

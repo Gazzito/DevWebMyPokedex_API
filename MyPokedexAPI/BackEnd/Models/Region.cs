@@ -1,33 +1,54 @@
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
-
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyPokedexAPI.Models
 {
     public class Region
     {
+        [Key]
         public int Id { get; set; }
-        public string Name { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; } = string.Empty;
+
+        [Required]
         public DateTime CreatedOn { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime UpdatedOn { get; set; }
-        public int UpdatedById { get; set; }
 
-        // Navigation property
-        public ICollection<Pokemon> Pokemons { get; set; } = new List<Pokemon>();
-        public User CreatedBy { get; set; }
-        public User UpdatedBy { get; set; }
+        [Required]
+        public int CreatedBy { get; set; }
 
+        public DateTime? UpdatedOn { get; set; }
+
+        public int? UpdatedBy { get; set; }
+
+        // Navegação para o utilizador que criou esta região
+        [ForeignKey("CreatedBy")]
+        public virtual User CreatedByUser { get; set; } = new User();
+
+        // Navegação para o utilizador que atualizou esta região
+        [ForeignKey("UpdatedBy")]
+        public virtual User UpdatedByUser { get; set; } = new User();
     }
+
     public class RegionDTO
     {
+        [Required]
         public int Id { get; set; }
-        public string Name { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; } = string.Empty; 
+
+        [Required]
         public DateTime CreatedOn { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime UpdatedOn { get; set; }
-        public int UpdatedById { get; set; }
+
+        [Required]
+        public int CreatedBy { get; set; }
+
+        public DateTime? UpdatedOn { get; set; }
+
+        public int? UpdatedBy { get; set; }
     }
-
-
 }

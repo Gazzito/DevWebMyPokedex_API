@@ -1,36 +1,67 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MyPokedexAPI.Models{
-
-   public class PokemonInPack
-    {
-        public int Id { get; set; }
-        public int PackId { get; set; }
-        public int PokemonId { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime UpdatedOn { get; set; }
-        public int UpdatedById { get; set; }
-
-        // Navigation properties
-        public Pack Pack { get; set; }
-        public Pokemon Pokemon { get; set; }
-        public User CreatedBy { get; set; }
-        public User UpdatedBy { get; set; }
-    }
-    
-    public class PokemonInPackDTO
+namespace MyPokedexAPI.Models
 {
-    public int Id { get; set; }
-    public int PackId { get; set; }
-    public int PokemonId { get; set; }
-    public DateTime CreatedOn { get; set; }
-    public int CreatedById { get; set; }
-    public DateTime UpdatedOn { get; set; }
-    public int UpdatedById { get; set; }
-}
+    public class PokemonInPack
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public int PackId { get; set; }
+
+        [Required]
+        public int PokemonId { get; set; }
+
+        [Required]
+        public DateTime CreatedOn { get; set; }
+
+        [Required]
+        public int CreatedBy { get; set; }
+
+        public DateTime? UpdatedOn { get; set; }
+
+        public int? UpdatedBy { get; set; }
+
+        // Navegação para o pack associado
+        [ForeignKey("PackId")]
+        public virtual Pack Pack { get; set; } = new Pack();
+
+        // Navegação para o Pokémon associado
+        [ForeignKey("PokemonId")]
+        public virtual Pokemon Pokemon { get; set; } = new Pokemon();
+
+        // Navegação para o utilizador que criou este registro
+        [ForeignKey("CreatedBy")]
+        public virtual User CreatedByUser { get; set; } = new User();
+
+        // Navegação para o utilizador que atualizou este registro
+        [ForeignKey("UpdatedBy")]
+        public virtual User UpdatedByUser { get; set; } = new User();
+    }
+
+    public class PokemonInPackDTO
+    {
+        [Required]
+        public int Id { get; set; }
+
+        [Required]
+        public int PackId { get; set; }
+
+        [Required]
+        public int PokemonId { get; set; }
+
+        [Required]
+        public DateTime CreatedOn { get; set; }
+
+        [Required]
+        public int CreatedBy { get; set; }
+
+        public DateTime? UpdatedOn { get; set; }
+
+        public int? UpdatedBy { get; set; }
+    }
 
 }

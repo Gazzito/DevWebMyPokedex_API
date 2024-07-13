@@ -1,23 +1,41 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MyPokedexAPI.Models{
-
-   public class UserProfile
+namespace MyPokedexAPI.Models
+{
+    public class UserProfile
     {
+        [Key]
+        [ForeignKey("User")]
         public int Id { get; set; }
-        public decimal Money { get; set; }
-        public string FullName { get; set; }
-        public byte[] ProfilePic { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime UpdatedOn { get; set; }
-        public int UpdatedById { get; set; }
 
-        // Navigation properties
-        public User CreatedBy { get; set; }
-        public User UpdatedBy { get; set; }
+        [Required]
+        public decimal Money { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime CreatedOn { get; set; }
+
+        [Required]
+        public int CreatedBy { get; set; }
+
+        public DateTime? UpdatedOn { get; set; }
+
+        public int? UpdatedBy { get; set; }
+
+        // Navegação para o utilizador correspondente (1:1)
+        public virtual User User { get; set; } = new User();
+
+        // Navegação para o utilizador que criou este perfil
+        [ForeignKey("CreatedBy")]
+        public virtual User CreatedByUser { get; set; } = new User();
+
+        // Navegação para o utilizador que atualizou este perfil
+        [ForeignKey("UpdatedBy")]
+        public virtual User UpdatedByUser { get; set; } = new User();
     }
 }

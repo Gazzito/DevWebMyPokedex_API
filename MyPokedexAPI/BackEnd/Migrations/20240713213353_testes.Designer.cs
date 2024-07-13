@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyPokedexAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240713043508_Update")]
-    partial class Update
+    [Migration("20240713213353_testes")]
+    partial class testes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,7 +36,7 @@ namespace MyPokedexAPI.Migrations
                     b.Property<double>("BronzeChance")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("CreatedById")
+                    b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
@@ -54,7 +54,8 @@ namespace MyPokedexAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<double>("PlatinumChance")
                         .HasColumnType("double precision");
@@ -68,19 +69,19 @@ namespace MyPokedexAPI.Migrations
                     b.Property<int>("TotalBought")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UpdatedById")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("UpdatedOn")
+                    b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedBy");
 
-                    b.HasIndex("UpdatedById");
+                    b.HasIndex("UpdatedBy");
 
-                    b.ToTable("Pack");
+                    b.ToTable("Packs");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.PackUsers", b =>
@@ -91,7 +92,7 @@ namespace MyPokedexAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("NextOpenExpected")
+                    b.Property<DateTime?>("NextOpenExpected")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("OpenedOn")
@@ -132,36 +133,36 @@ namespace MyPokedexAPI.Migrations
                     b.Property<int>("BaseSpeedPoints")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CreatedById")
+                    b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<byte[]>("Image")
-                        .IsRequired()
                         .HasColumnType("bytea");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("RegionId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UpdatedById")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("UpdatedOn")
+                    b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedBy");
 
                     b.HasIndex("RegionId");
 
-                    b.HasIndex("UpdatedById");
+                    b.HasIndex("UpdatedBy");
 
                     b.ToTable("Pokemons");
                 });
@@ -174,7 +175,7 @@ namespace MyPokedexAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CreatedById")
+                    b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
@@ -186,23 +187,23 @@ namespace MyPokedexAPI.Migrations
                     b.Property<int>("PokemonId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UpdatedById")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("UpdatedOn")
+                    b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedBy");
 
                     b.HasIndex("PackId");
 
                     b.HasIndex("PokemonId");
 
-                    b.HasIndex("UpdatedById");
+                    b.HasIndex("UpdatedBy");
 
-                    b.ToTable("PokemonInPack");
+                    b.ToTable("PokemonInPacks");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.Region", b =>
@@ -213,7 +214,7 @@ namespace MyPokedexAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CreatedById")
+                    b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
@@ -221,19 +222,20 @@ namespace MyPokedexAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<int>("UpdatedById")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("UpdatedOn")
+                    b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedBy");
 
-                    b.HasIndex("UpdatedById");
+                    b.HasIndex("UpdatedBy");
 
                     b.ToTable("Regions");
                 });
@@ -246,24 +248,28 @@ namespace MyPokedexAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EspaceId")
+                    b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<bool>("Persistent")
-                        .HasColumnType("boolean");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("SSKey")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("UpdatedBy");
 
                     b.ToTable("Roles");
                 });
@@ -271,12 +277,9 @@ namespace MyPokedexAPI.Migrations
             modelBuilder.Entity("MyPokedexAPI.Models.TotalDiamondPokemonsRanking", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CreatedById")
+                    b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
@@ -288,17 +291,20 @@ namespace MyPokedexAPI.Migrations
                     b.Property<int>("TotalDiamondPokemons")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UpdatedById")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("UpdatedOn")
+                    b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedBy");
 
-                    b.HasIndex("UpdatedById");
+                    b.HasIndex("UpdatedBy");
 
                     b.ToTable("TotalDiamondPokemonsRankings");
                 });
@@ -306,12 +312,9 @@ namespace MyPokedexAPI.Migrations
             modelBuilder.Entity("MyPokedexAPI.Models.TotalPacksOpenedRanking", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CreatedById")
+                    b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
@@ -323,42 +326,19 @@ namespace MyPokedexAPI.Migrations
                     b.Property<int>("TotalPacksOpened")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UpdatedById")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("UpdatedOn")
+                    b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedBy");
 
-                    b.HasIndex("UpdatedById");
+                    b.HasIndex("UpdatedBy");
 
                     b.ToTable("TotalPacksOpenedRankings");
-                });
-
-            modelBuilder.Entity("MyPokedexAPI.Models.Transaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PackId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PackId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Transaction");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.User", b =>
@@ -369,34 +349,34 @@ namespace MyPokedexAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Creation_Date")
+                    b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<bool>("Is_Active")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("Last_Login")
+                    b.Property<DateTime?>("LastLogin")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("MobilePhone")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -423,7 +403,7 @@ namespace MyPokedexAPI.Migrations
                     b.Property<int>("ActualSpeedPoints")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CreatedById")
+                    b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
@@ -431,6 +411,9 @@ namespace MyPokedexAPI.Migrations
 
                     b.Property<bool>("IsFavourite")
                         .HasColumnType("boolean");
+
+                    b.Property<int>("PackId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("PokemonId")
                         .HasColumnType("integer");
@@ -442,25 +425,24 @@ namespace MyPokedexAPI.Migrations
                     b.Property<int>("TotalCombatPoints")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UpdatedById")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("UpdatedOn")
+                    b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserPackId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("PackId");
 
                     b.HasIndex("PokemonId");
 
-                    b.HasIndex("UpdatedById");
+                    b.HasIndex("UpdatedBy");
 
                     b.HasIndex("UserId");
 
@@ -470,12 +452,9 @@ namespace MyPokedexAPI.Migrations
             modelBuilder.Entity("MyPokedexAPI.Models.UserProfile", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CreatedById")
+                    b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
@@ -483,26 +462,23 @@ namespace MyPokedexAPI.Migrations
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<decimal>("Money")
                         .HasColumnType("numeric");
 
-                    b.Property<byte[]>("ProfilePic")
-                        .IsRequired()
-                        .HasColumnType("bytea");
-
-                    b.Property<int>("UpdatedById")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("UpdatedOn")
+                    b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedBy");
 
-                    b.HasIndex("UpdatedById");
+                    b.HasIndex("UpdatedBy");
 
                     b.ToTable("UserProfiles");
                 });
@@ -532,21 +508,19 @@ namespace MyPokedexAPI.Migrations
 
             modelBuilder.Entity("MyPokedexAPI.Models.Pack", b =>
                 {
-                    b.HasOne("MyPokedexAPI.Models.User", "CreatedBy")
+                    b.HasOne("MyPokedexAPI.Models.User", "CreatedByUser")
                         .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedBy")
+                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedByUser")
                         .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("UpdatedBy");
 
-                    b.Navigation("CreatedBy");
+                    b.Navigation("CreatedByUser");
 
-                    b.Navigation("UpdatedBy");
+                    b.Navigation("UpdatedByUser");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.PackUsers", b =>
@@ -554,13 +528,13 @@ namespace MyPokedexAPI.Migrations
                     b.HasOne("MyPokedexAPI.Models.Pack", "Pack")
                         .WithMany("PackUsers")
                         .HasForeignKey("PackId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyPokedexAPI.Models.User", "User")
                         .WithMany("PackUsers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Pack");
@@ -570,208 +544,225 @@ namespace MyPokedexAPI.Migrations
 
             modelBuilder.Entity("MyPokedexAPI.Models.Pokemon", b =>
                 {
-                    b.HasOne("MyPokedexAPI.Models.User", "CreatedBy")
-                        .WithMany("CreatedPokemons")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("MyPokedexAPI.Models.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyPokedexAPI.Models.Region", "Region")
-                        .WithMany("Pokemons")
+                        .WithMany()
                         .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedBy")
-                        .WithMany("UpdatedPokemons")
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy");
 
-                    b.Navigation("CreatedBy");
+                    b.Navigation("CreatedByUser");
 
                     b.Navigation("Region");
 
-                    b.Navigation("UpdatedBy");
+                    b.Navigation("UpdatedByUser");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.PokemonInPack", b =>
                 {
-                    b.HasOne("MyPokedexAPI.Models.User", "CreatedBy")
-                        .WithMany("PokemonInPacksCreated")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("MyPokedexAPI.Models.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyPokedexAPI.Models.Pack", "Pack")
                         .WithMany("PokemonInPacks")
                         .HasForeignKey("PackId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyPokedexAPI.Models.Pokemon", "Pokemon")
-                        .WithMany()
+                        .WithMany("PokemonInPacks")
                         .HasForeignKey("PokemonId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedBy")
-                        .WithMany("PokemonInPacksUpdated")
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy");
 
-                    b.Navigation("CreatedBy");
+                    b.Navigation("CreatedByUser");
 
                     b.Navigation("Pack");
 
                     b.Navigation("Pokemon");
 
-                    b.Navigation("UpdatedBy");
+                    b.Navigation("UpdatedByUser");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.Region", b =>
                 {
-                    b.HasOne("MyPokedexAPI.Models.User", "CreatedBy")
-                        .WithMany("CreatedRegions")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("MyPokedexAPI.Models.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedBy")
-                        .WithMany("UpdatedRegions")
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("UpdatedByUser");
+                });
+
+            modelBuilder.Entity("MyPokedexAPI.Models.Role", b =>
+                {
+                    b.HasOne("MyPokedexAPI.Models.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CreatedBy");
+                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy");
 
-                    b.Navigation("UpdatedBy");
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("UpdatedByUser");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.TotalDiamondPokemonsRanking", b =>
                 {
-                    b.HasOne("MyPokedexAPI.Models.User", "CreatedBy")
-                        .WithMany("TotalDiamondPokemonsRankings")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedBy")
+                    b.HasOne("MyPokedexAPI.Models.User", "CreatedByUser")
                         .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CreatedBy");
+                    b.HasOne("MyPokedexAPI.Models.User", "User")
+                        .WithOne("TotalDiamondPokemonsRanking")
+                        .HasForeignKey("MyPokedexAPI.Models.TotalDiamondPokemonsRanking", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("UpdatedBy");
+                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("UpdatedByUser");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.TotalPacksOpenedRanking", b =>
                 {
-                    b.HasOne("MyPokedexAPI.Models.User", "CreatedBy")
-                        .WithMany("TotalPacksOpenedRankings")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedBy")
+                    b.HasOne("MyPokedexAPI.Models.User", "CreatedByUser")
                         .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("MyPokedexAPI.Models.Transaction", b =>
-                {
-                    b.HasOne("MyPokedexAPI.Models.Pack", "Pack")
-                        .WithMany("Transactions")
-                        .HasForeignKey("PackId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyPokedexAPI.Models.User", "User")
-                        .WithMany("Transactions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithOne("TotalPacksOpenedRanking")
+                        .HasForeignKey("MyPokedexAPI.Models.TotalPacksOpenedRanking", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Pack");
+                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("UpdatedByUser");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.UserPokemons", b =>
                 {
-                    b.HasOne("MyPokedexAPI.Models.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
+                    b.HasOne("MyPokedexAPI.Models.User", "CreatedByUser")
+                        .WithMany("UserPokemonsCreatedBy")
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MyPokedexAPI.Models.Pack", "Pack")
+                        .WithMany("UserPokemons")
+                        .HasForeignKey("PackId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MyPokedexAPI.Models.Pokemon", "Pokemon")
-                        .WithMany()
+                        .WithMany("UserPokemons")
                         .HasForeignKey("PokemonId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedByUser")
+                        .WithMany("UserPokemonsUpdatedBy")
+                        .HasForeignKey("UpdatedBy")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MyPokedexAPI.Models.User", "User")
                         .WithMany("UserPokemons")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CreatedBy");
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("Pack");
 
                     b.Navigation("Pokemon");
 
-                    b.Navigation("UpdatedBy");
+                    b.Navigation("UpdatedByUser");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.UserProfile", b =>
                 {
-                    b.HasOne("MyPokedexAPI.Models.User", "CreatedBy")
-                        .WithMany("UserProfiles")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedBy")
+                    b.HasOne("MyPokedexAPI.Models.User", "CreatedByUser")
                         .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CreatedBy");
+                    b.HasOne("MyPokedexAPI.Models.User", "User")
+                        .WithOne("UserProfile")
+                        .HasForeignKey("MyPokedexAPI.Models.UserProfile", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("UpdatedBy");
+                    b.HasOne("MyPokedexAPI.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("UpdatedByUser");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.UserRole", b =>
                 {
                     b.HasOne("MyPokedexAPI.Models.Role", "Role")
-                        .WithMany("UserRoles")
+                        .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyPokedexAPI.Models.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Role");
@@ -785,44 +776,34 @@ namespace MyPokedexAPI.Migrations
 
                     b.Navigation("PokemonInPacks");
 
-                    b.Navigation("Transactions");
+                    b.Navigation("UserPokemons");
                 });
 
-            modelBuilder.Entity("MyPokedexAPI.Models.Region", b =>
+            modelBuilder.Entity("MyPokedexAPI.Models.Pokemon", b =>
                 {
-                    b.Navigation("Pokemons");
-                });
+                    b.Navigation("PokemonInPacks");
 
-            modelBuilder.Entity("MyPokedexAPI.Models.Role", b =>
-                {
-                    b.Navigation("UserRoles");
+                    b.Navigation("UserPokemons");
                 });
 
             modelBuilder.Entity("MyPokedexAPI.Models.User", b =>
                 {
-                    b.Navigation("CreatedPokemons");
-
-                    b.Navigation("CreatedRegions");
-
                     b.Navigation("PackUsers");
 
-                    b.Navigation("PokemonInPacksCreated");
+                    b.Navigation("TotalDiamondPokemonsRanking")
+                        .IsRequired();
 
-                    b.Navigation("PokemonInPacksUpdated");
-
-                    b.Navigation("TotalDiamondPokemonsRankings");
-
-                    b.Navigation("TotalPacksOpenedRankings");
-
-                    b.Navigation("Transactions");
-
-                    b.Navigation("UpdatedPokemons");
-
-                    b.Navigation("UpdatedRegions");
+                    b.Navigation("TotalPacksOpenedRanking")
+                        .IsRequired();
 
                     b.Navigation("UserPokemons");
 
-                    b.Navigation("UserProfiles");
+                    b.Navigation("UserPokemonsCreatedBy");
+
+                    b.Navigation("UserPokemonsUpdatedBy");
+
+                    b.Navigation("UserProfile")
+                        .IsRequired();
 
                     b.Navigation("UserRoles");
                 });

@@ -1,21 +1,40 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MyPokedexAPI.Models{
+namespace MyPokedexAPI.Models
+{
     public class TotalDiamondPokemonsRanking
-     {
+    {
+        [Key]
+        [ForeignKey("User")]
         public int Id { get; set; }
-        public int TotalDiamondPokemons { get; set; }
-        public int Rank { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public int CreatedById { get; set; }
-        public DateTime UpdatedOn { get; set; }
-        public int UpdatedById { get; set; }
 
-        // Navigation properties
-        public User CreatedBy { get; set; }
-        public User UpdatedBy { get; set; }
+        public int UserId { get; set; }
+
+        [Required]
+        public int TotalDiamondPokemons { get; set; }
+
+        [Required]
+        public int Rank { get; set; }
+
+        [Required]
+        public DateTime CreatedOn { get; set; }
+
+        [Required]
+        public int CreatedBy { get; set; }
+
+        public DateTime? UpdatedOn { get; set; }
+
+        public int? UpdatedBy { get; set; }
+
+        // Navegação para o utilizador que criou este ranking
+        [ForeignKey("CreatedBy")]
+        public virtual User CreatedByUser { get; set; } = new User();
+
+        // Navegação para o utilizador que atualizou este ranking
+        [ForeignKey("UpdatedBy")]
+        public virtual User UpdatedByUser { get; set; } = new User();
+        public virtual User User { get; set; } = new User();
     }
 }

@@ -7,42 +7,24 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyPokedexAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class Update : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Roles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Persistent = table.Column<bool>(type: "boolean", nullable: false),
-                    SSKey = table.Column<string>(type: "text", nullable: false),
-                    EspaceId = table.Column<int>(type: "integer", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Username = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    MobilePhone = table.Column<string>(type: "text", nullable: false),
-                    Creation_Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Last_Login = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Is_Active = table.Column<bool>(type: "boolean", nullable: false)
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Username = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Password = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -50,12 +32,12 @@ namespace MyPokedexAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Pack",
+                name: "Packs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
                     Image = table.Column<byte[]>(type: "bytea", nullable: false),
                     BronzeChance = table.Column<double>(type: "double precision", nullable: false),
@@ -65,25 +47,24 @@ namespace MyPokedexAPI.Migrations
                     DiamondChance = table.Column<double>(type: "double precision", nullable: false),
                     TotalBought = table.Column<int>(type: "integer", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedById = table.Column<int>(type: "integer", nullable: false)
+                    CreatedBy = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Pack", x => x.Id);
+                    table.PrimaryKey("PK_Packs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Pack_Users_CreatedById",
-                        column: x => x.CreatedById,
+                        name: "FK_Packs_Users_CreatedBy",
+                        column: x => x.CreatedBy,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Pack_Users_UpdatedById",
-                        column: x => x.UpdatedById,
+                        name: "FK_Packs_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -92,118 +73,225 @@ namespace MyPokedexAPI.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedById = table.Column<int>(type: "integer", nullable: false)
+                    CreatedBy = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Regions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Regions_Users_CreatedById",
-                        column: x => x.CreatedById,
+                        name: "FK_Regions_Users_CreatedBy",
+                        column: x => x.CreatedBy,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Regions_Users_UpdatedById",
-                        column: x => x.UpdatedById,
+                        name: "FK_Regions_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Roles_Users_CreatedBy",
+                        column: x => x.CreatedBy,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Roles_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "TotalDiamondPokemonsRankings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
                     TotalDiamondPokemons = table.Column<int>(type: "integer", nullable: false),
                     Rank = table.Column<int>(type: "integer", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedById = table.Column<int>(type: "integer", nullable: false)
+                    CreatedBy = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TotalDiamondPokemonsRankings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TotalDiamondPokemonsRankings_Users_CreatedById",
-                        column: x => x.CreatedById,
+                        name: "FK_TotalDiamondPokemonsRankings_Users_CreatedBy",
+                        column: x => x.CreatedBy,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TotalDiamondPokemonsRankings_Users_UpdatedById",
-                        column: x => x.UpdatedById,
+                        name: "FK_TotalDiamondPokemonsRankings_Users_Id",
+                        column: x => x.Id,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TotalDiamondPokemonsRankings_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "TotalPacksOpenedRankings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<int>(type: "integer", nullable: false),
                     TotalPacksOpened = table.Column<int>(type: "integer", nullable: false),
                     Rank = table.Column<int>(type: "integer", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedById = table.Column<int>(type: "integer", nullable: false)
+                    CreatedBy = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TotalPacksOpenedRankings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TotalPacksOpenedRankings_Users_CreatedById",
-                        column: x => x.CreatedById,
+                        name: "FK_TotalPacksOpenedRankings_Users_CreatedBy",
+                        column: x => x.CreatedBy,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TotalPacksOpenedRankings_Users_UpdatedById",
-                        column: x => x.UpdatedById,
+                        name: "FK_TotalPacksOpenedRankings_Users_Id",
+                        column: x => x.Id,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TotalPacksOpenedRankings_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserProfiles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<int>(type: "integer", nullable: false),
                     Money = table.Column<decimal>(type: "numeric", nullable: false),
-                    FullName = table.Column<string>(type: "text", nullable: false),
-                    ProfilePic = table.Column<byte[]>(type: "bytea", nullable: false),
+                    FullName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedById = table.Column<int>(type: "integer", nullable: false)
+                    CreatedBy = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserProfiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_Users_CreatedById",
-                        column: x => x.CreatedById,
+                        name: "FK_UserProfiles_Users_CreatedBy",
+                        column: x => x.CreatedBy,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_Users_UpdatedById",
-                        column: x => x.UpdatedById,
+                        name: "FK_UserProfiles_Users_Id",
+                        column: x => x.Id,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserProfiles_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PackUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    PackId = table.Column<int>(type: "integer", nullable: false),
+                    OpenedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    NextOpenExpected = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PackUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PackUsers_Packs_PackId",
+                        column: x => x.PackId,
+                        principalTable: "Packs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PackUsers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Pokemons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    RegionId = table.Column<int>(type: "integer", nullable: false),
+                    BaseAttackPoints = table.Column<int>(type: "integer", nullable: false),
+                    BaseHealthPoints = table.Column<int>(type: "integer", nullable: false),
+                    BaseDefensePoints = table.Column<int>(type: "integer", nullable: false),
+                    BaseSpeedPoints = table.Column<int>(type: "integer", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true),
+                    Image = table.Column<byte[]>(type: "bytea", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pokemons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Pokemons_Regions_RegionId",
+                        column: x => x.RegionId,
+                        principalTable: "Regions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Pokemons_Users_CreatedBy",
+                        column: x => x.CreatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Pokemons_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -223,112 +311,17 @@ namespace MyPokedexAPI.Migrations
                         column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserRoles_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PackUsers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    PackId = table.Column<int>(type: "integer", nullable: false),
-                    OpenedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    NextOpenExpected = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PackUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PackUsers_Pack_PackId",
-                        column: x => x.PackId,
-                        principalTable: "Pack",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PackUsers_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Transaction",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    PackId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Transaction", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Transaction_Pack_PackId",
-                        column: x => x.PackId,
-                        principalTable: "Pack",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Transaction_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Pokemons",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    RegionId = table.Column<int>(type: "integer", nullable: false),
-                    Image = table.Column<byte[]>(type: "bytea", nullable: false),
-                    BaseAttackPoints = table.Column<int>(type: "integer", nullable: false),
-                    BaseHealthPoints = table.Column<int>(type: "integer", nullable: false),
-                    BaseDefensePoints = table.Column<int>(type: "integer", nullable: false),
-                    BaseSpeedPoints = table.Column<int>(type: "integer", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedById = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Pokemons", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Pokemons_Regions_RegionId",
-                        column: x => x.RegionId,
-                        principalTable: "Regions",
-                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Pokemons_Users_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Pokemons_Users_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PokemonInPack",
+                name: "PokemonInPacks",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -336,37 +329,36 @@ namespace MyPokedexAPI.Migrations
                     PackId = table.Column<int>(type: "integer", nullable: false),
                     PokemonId = table.Column<int>(type: "integer", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedById = table.Column<int>(type: "integer", nullable: false)
+                    CreatedBy = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PokemonInPack", x => x.Id);
+                    table.PrimaryKey("PK_PokemonInPacks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PokemonInPack_Pack_PackId",
+                        name: "FK_PokemonInPacks_Packs_PackId",
                         column: x => x.PackId,
-                        principalTable: "Pack",
+                        principalTable: "Packs",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PokemonInPack_Pokemons_PokemonId",
+                        name: "FK_PokemonInPacks_Pokemons_PokemonId",
                         column: x => x.PokemonId,
                         principalTable: "Pokemons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PokemonInPack_Users_CreatedById",
-                        column: x => x.CreatedById,
+                        name: "FK_PokemonInPacks_Users_CreatedBy",
+                        column: x => x.CreatedBy,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PokemonInPack_Users_UpdatedById",
-                        column: x => x.UpdatedById,
+                        name: "FK_PokemonInPacks_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -386,28 +378,34 @@ namespace MyPokedexAPI.Migrations
                     UserPackId = table.Column<int>(type: "integer", nullable: false),
                     IsFavourite = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedById = table.Column<int>(type: "integer", nullable: false)
+                    CreatedBy = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserPokemons", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_UserPokemons_PackUsers_UserPackId",
+                        column: x => x.UserPackId,
+                        principalTable: "PackUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_UserPokemons_Pokemons_PokemonId",
                         column: x => x.PokemonId,
                         principalTable: "Pokemons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserPokemons_Users_CreatedById",
-                        column: x => x.CreatedById,
+                        name: "FK_UserPokemons_Users_CreatedBy",
+                        column: x => x.CreatedBy,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserPokemons_Users_UpdatedById",
-                        column: x => x.UpdatedById,
+                        name: "FK_UserPokemons_Users_UpdatedBy",
+                        column: x => x.UpdatedBy,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -416,18 +414,18 @@ namespace MyPokedexAPI.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pack_CreatedById",
-                table: "Pack",
-                column: "CreatedById");
+                name: "IX_Packs_CreatedBy",
+                table: "Packs",
+                column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pack_UpdatedById",
-                table: "Pack",
-                column: "UpdatedById");
+                name: "IX_Packs_UpdatedBy",
+                table: "Packs",
+                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PackUsers_PackId",
@@ -440,29 +438,29 @@ namespace MyPokedexAPI.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PokemonInPack_CreatedById",
-                table: "PokemonInPack",
-                column: "CreatedById");
+                name: "IX_PokemonInPacks_CreatedBy",
+                table: "PokemonInPacks",
+                column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PokemonInPack_PackId",
-                table: "PokemonInPack",
+                name: "IX_PokemonInPacks_PackId",
+                table: "PokemonInPacks",
                 column: "PackId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PokemonInPack_PokemonId",
-                table: "PokemonInPack",
+                name: "IX_PokemonInPacks_PokemonId",
+                table: "PokemonInPacks",
                 column: "PokemonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PokemonInPack_UpdatedById",
-                table: "PokemonInPack",
-                column: "UpdatedById");
+                name: "IX_PokemonInPacks_UpdatedBy",
+                table: "PokemonInPacks",
+                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pokemons_CreatedById",
+                name: "IX_Pokemons_CreatedBy",
                 table: "Pokemons",
-                column: "CreatedById");
+                column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pokemons_RegionId",
@@ -470,54 +468,54 @@ namespace MyPokedexAPI.Migrations
                 column: "RegionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pokemons_UpdatedById",
+                name: "IX_Pokemons_UpdatedBy",
                 table: "Pokemons",
-                column: "UpdatedById");
+                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Regions_CreatedById",
+                name: "IX_Regions_CreatedBy",
                 table: "Regions",
-                column: "CreatedById");
+                column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Regions_UpdatedById",
+                name: "IX_Regions_UpdatedBy",
                 table: "Regions",
-                column: "UpdatedById");
+                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TotalDiamondPokemonsRankings_CreatedById",
+                name: "IX_Roles_CreatedBy",
+                table: "Roles",
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Roles_UpdatedBy",
+                table: "Roles",
+                column: "UpdatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TotalDiamondPokemonsRankings_CreatedBy",
                 table: "TotalDiamondPokemonsRankings",
-                column: "CreatedById");
+                column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TotalDiamondPokemonsRankings_UpdatedById",
+                name: "IX_TotalDiamondPokemonsRankings_UpdatedBy",
                 table: "TotalDiamondPokemonsRankings",
-                column: "UpdatedById");
+                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TotalPacksOpenedRankings_CreatedById",
+                name: "IX_TotalPacksOpenedRankings_CreatedBy",
                 table: "TotalPacksOpenedRankings",
-                column: "CreatedById");
+                column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TotalPacksOpenedRankings_UpdatedById",
+                name: "IX_TotalPacksOpenedRankings_UpdatedBy",
                 table: "TotalPacksOpenedRankings",
-                column: "UpdatedById");
+                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transaction_PackId",
-                table: "Transaction",
-                column: "PackId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transaction_UserId",
-                table: "Transaction",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserPokemons_CreatedById",
+                name: "IX_UserPokemons_CreatedBy",
                 table: "UserPokemons",
-                column: "CreatedById");
+                column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPokemons_PokemonId",
@@ -525,9 +523,9 @@ namespace MyPokedexAPI.Migrations
                 column: "PokemonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserPokemons_UpdatedById",
+                name: "IX_UserPokemons_UpdatedBy",
                 table: "UserPokemons",
-                column: "UpdatedById");
+                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPokemons_UserId",
@@ -535,14 +533,19 @@ namespace MyPokedexAPI.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_CreatedById",
-                table: "UserProfiles",
-                column: "CreatedById");
+                name: "IX_UserPokemons_UserPackId",
+                table: "UserPokemons",
+                column: "UserPackId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_UpdatedById",
+                name: "IX_UserProfiles_CreatedBy",
                 table: "UserProfiles",
-                column: "UpdatedById");
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserProfiles_UpdatedBy",
+                table: "UserProfiles",
+                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
@@ -559,19 +562,13 @@ namespace MyPokedexAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PackUsers");
-
-            migrationBuilder.DropTable(
-                name: "PokemonInPack");
+                name: "PokemonInPacks");
 
             migrationBuilder.DropTable(
                 name: "TotalDiamondPokemonsRankings");
 
             migrationBuilder.DropTable(
                 name: "TotalPacksOpenedRankings");
-
-            migrationBuilder.DropTable(
-                name: "Transaction");
 
             migrationBuilder.DropTable(
                 name: "UserPokemons");
@@ -583,13 +580,16 @@ namespace MyPokedexAPI.Migrations
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
-                name: "Pack");
+                name: "PackUsers");
 
             migrationBuilder.DropTable(
                 name: "Pokemons");
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Packs");
 
             migrationBuilder.DropTable(
                 name: "Regions");

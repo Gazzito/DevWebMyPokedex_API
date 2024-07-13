@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyPokedexAPI.Data;
 using MyPokedexAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,28 +18,29 @@ namespace MyPokedexAPI.Controllers
         {
             _context = context;
         }
+
         [HttpGet("GetMostPopularPacks")]
         public async Task<IActionResult> GetMostPopularPacks()
         {
             var mostPopularPacks = await _context.Packs
                 .OrderByDescending(p => p.TotalBought)
                 .Take(5)
-                .Select(p => new
+                .Select(p => new PackDTO
                 {
-                    p.Id,
-                    p.Name,
-                    p.Price,
-                    p.BronzeChance,
-                    p.SilverChance,
-                    p.GoldChance,
-                    p.PlatinumChance,
-                    p.DiamondChance,
-                    p.TotalBought,
-                    p.CreatedOn,
-                    p.CreatedById,
-                    p.UpdatedOn,
-                    p.UpdatedById,
-                    ImageBase64 = p.Image != null ? Convert.ToBase64String(p.Image) : null
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    BronzeChance = p.BronzeChance,
+                    SilverChance = p.SilverChance,
+                    GoldChance = p.GoldChance,
+                    PlatinumChance = p.PlatinumChance,
+                    DiamondChance = p.DiamondChance,
+                    TotalBought = p.TotalBought,
+                    CreatedOn = p.CreatedOn,
+                    CreatedBy = p.CreatedBy,
+                    UpdatedOn = p.UpdatedOn,
+                    UpdatedBy = p.UpdatedBy,
+                    Image = p.Image != null ? Convert.ToBase64String(p.Image) : null
                 })
                 .ToListAsync();
 
@@ -60,6 +62,23 @@ namespace MyPokedexAPI.Controllers
             var packs = await query
                 .Skip((page - 1) * maxRecords)
                 .Take(maxRecords)
+                .Select(p => new PackDTO
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    BronzeChance = p.BronzeChance,
+                    SilverChance = p.SilverChance,
+                    GoldChance = p.GoldChance,
+                    PlatinumChance = p.PlatinumChance,
+                    DiamondChance = p.DiamondChance,
+                    TotalBought = p.TotalBought,
+                    CreatedOn = p.CreatedOn,
+                    CreatedBy = p.CreatedBy,
+                    UpdatedOn = p.UpdatedOn,
+                    UpdatedBy = p.UpdatedBy,
+                    Image = p.Image != null ? Convert.ToBase64String(p.Image) : null
+                })
                 .ToListAsync();
 
             return Ok(new { totalPacks, packs });
@@ -78,7 +97,7 @@ namespace MyPokedexAPI.Controllers
                 Id = packDto.Id,
                 Name = packDto.Name,
                 Price = packDto.Price,
-                Image = !string.IsNullOrEmpty(packDto.ImageBase64) ? Convert.FromBase64String(packDto.ImageBase64) : null,
+                Image = !string.IsNullOrEmpty(packDto.Image) ? Convert.FromBase64String(packDto.Image) : null,
                 BronzeChance = packDto.BronzeChance,
                 SilverChance = packDto.SilverChance,
                 GoldChance = packDto.GoldChance,
@@ -86,9 +105,9 @@ namespace MyPokedexAPI.Controllers
                 DiamondChance = packDto.DiamondChance,
                 TotalBought = packDto.TotalBought,
                 CreatedOn = DateTime.SpecifyKind(packDto.CreatedOn, DateTimeKind.Utc),
-                CreatedById = packDto.CreatedById,
-                UpdatedOn = DateTime.SpecifyKind(packDto.UpdatedOn, DateTimeKind.Utc),
-                UpdatedById = packDto.UpdatedById
+                CreatedBy = packDto.CreatedBy,
+                UpdatedOn = packDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(packDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
+                UpdatedBy = packDto.UpdatedBy
             };
 
             if (pack.Id == 0)
@@ -113,15 +132,15 @@ namespace MyPokedexAPI.Controllers
                 existingPack.DiamondChance = pack.DiamondChance;
                 existingPack.TotalBought = pack.TotalBought;
                 existingPack.CreatedOn = pack.CreatedOn;
-                existingPack.CreatedById = pack.CreatedById;
+                existingPack.CreatedBy = pack.CreatedBy;
                 existingPack.UpdatedOn = pack.UpdatedOn;
-                existingPack.UpdatedById = pack.UpdatedById;
+                existingPack.UpdatedBy = pack.UpdatedBy;
 
                 _context.Packs.Update(existingPack);
             }
 
             await _context.SaveChangesAsync();
-            return Ok(pack);
+            return Ok(packDto);
         }
 
         [HttpDelete("DeletePack/{id}")]
@@ -138,8 +157,5 @@ namespace MyPokedexAPI.Controllers
 
             return Ok();
         }
-
     }
 }
-
-
