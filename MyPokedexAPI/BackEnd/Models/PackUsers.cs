@@ -18,8 +18,6 @@ namespace MyPokedexAPI.Models
         [Required]
         public DateTime OpenedOn { get; set; }
 
-        public DateTime? NextOpenExpected { get; set; }
-
         // Navegação para o utilizador associado
         [ForeignKey("UserId")]
         public virtual User User { get; set; }

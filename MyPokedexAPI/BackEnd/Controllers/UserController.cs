@@ -42,57 +42,57 @@ namespace MyPokedexAPI.Controllers
 
 
         [HttpPost("CreateOrUpdateUser")]
-public async Task<IActionResult> CreateOrUpdateUser([FromBody] UserDTO userDto)
-{
-    if (userDto == null)
-    {
-        return BadRequest();
-    }
-
-    User user;
-    if (userDto.Id == 0)
-    {
-        user = new User
+        public async Task<IActionResult> CreateOrUpdateUser([FromBody] UserDTO userDto)
         {
-            Name = userDto.Name,
-            Username = userDto.Username,
-            Password = userDto.Password,
-            Email = userDto.Email,
-            CreationDate = DateTime.SpecifyKind(userDto.CreationDate, DateTimeKind.Utc),
-            LastLogin = userDto.LastLogin.HasValue ? DateTime.SpecifyKind(userDto.LastLogin.Value, DateTimeKind.Utc) : (DateTime?)null,
-            IsActive = userDto.IsActive,
-        };
+            if (userDto == null)
+            {
+                return BadRequest();
+            }
 
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
+            User user;
+            if (userDto.Id == 0)
+            {
+                user = new User
+                {
+                    Name = userDto.Name,
+                    Username = userDto.Username,
+                    Password = userDto.Password,
+                    Email = userDto.Email,
+                    CreationDate = DateTime.SpecifyKind(userDto.CreationDate, DateTimeKind.Utc),
+                    LastLogin = userDto.LastLogin.HasValue ? DateTime.SpecifyKind(userDto.LastLogin.Value, DateTimeKind.Utc) : (DateTime?)null,
+                    IsActive = userDto.IsActive,
+                };
 
-        userDto.Id = user.Id;
-    }
-    else
-    {
-        user = await _context.Users.FindAsync(userDto.Id);
-        if (user == null)
-        {
-            return NotFound();
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+
+                userDto.Id = user.Id;
+            }
+            else
+            {
+                user = await _context.Users.FindAsync(userDto.Id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.Name = userDto.Name;
+                user.Username = userDto.Username;
+                user.Password = userDto.Password;
+                user.Email = userDto.Email;
+                user.CreationDate = DateTime.SpecifyKind(userDto.CreationDate, DateTimeKind.Utc);
+                user.LastLogin = userDto.LastLogin.HasValue ? DateTime.SpecifyKind(userDto.LastLogin.Value, DateTimeKind.Utc) : (DateTime?)null;
+                user.IsActive = userDto.IsActive;
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                userDto.Id = user.Id;
+            }
+
+            // Retorna o DTO atualizado com o ID do usuário criado ou atualizado
+            return Ok(userDto);
         }
-
-        user.Name = userDto.Name;
-        user.Username = userDto.Username;
-        user.Password = userDto.Password;
-        user.Email = userDto.Email;
-        user.CreationDate = DateTime.SpecifyKind(userDto.CreationDate, DateTimeKind.Utc);
-        user.LastLogin = userDto.LastLogin.HasValue ? DateTime.SpecifyKind(userDto.LastLogin.Value, DateTimeKind.Utc) : (DateTime?)null;
-        user.IsActive = userDto.IsActive;
-
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
-
-        userDto.Id = user.Id;
-    }
-
-    // Retorna o DTO atualizado com o ID do usuário criado ou atualizado
-    return Ok(userDto);
-}
 
 
 
@@ -109,6 +109,20 @@ public async Task<IActionResult> CreateOrUpdateUser([FromBody] UserDTO userDto)
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+
+
+        [HttpGet("GetNextOpenExpected")]
+        public async Task<IActionResult> GetNextOpenExpected(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            return Ok(new { NextOpenExpected = user.NextOpenExpected });
         }
     }
 }

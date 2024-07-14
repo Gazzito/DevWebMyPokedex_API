@@ -25,6 +25,7 @@ namespace MyPokedexAPI.Models
         [EmailAddress]
         [StringLength(100)]
         public string Email { get; set; }
+        public DateTime? NextOpenExpected { get; set; }
 
         [Required]
         public DateTime CreationDate { get; set; }
@@ -67,6 +68,7 @@ namespace MyPokedexAPI.Models
         [Required]
         [StringLength(100)]
         public string Password { get; set; }
+        public DateTime? NextOpenExpected { get; set; }
 
         [Required]
         [EmailAddress]

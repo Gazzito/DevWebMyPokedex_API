@@ -129,14 +129,29 @@ namespace MyPokedexAPI.Controllers
             return Ok();
         }
 
-         [HttpGet("GetRandomPokemonInPack")]
-        public async Task<IActionResult> GetRandomPokemonInPack(int packId, int userId)
+        [HttpGet("GetRandomPokemonInPack")]
+        public async Task<IActionResult> GetRandomPokemonInPack(int packId, int userId, bool isPackFree)
         {
             // Fetch the pack details
             var pack = await _context.Packs.FindAsync(packId);
             if (pack == null)
             {
                 return NotFound("Pack not found.");
+            }
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (isPackFree)
+            {
+                // Check the last time the user can open a free pack
+                if (user.NextOpenExpected.HasValue && DateTime.UtcNow < user.NextOpenExpected.Value)
+                {
+                    return BadRequest(new { Message = $"You can open the next free pack after {user.NextOpenExpected.Value}.", NextOpenExpected = user.NextOpenExpected });
+                }
             }
 
             // Fetch the Pokémons in the pack
@@ -198,31 +213,161 @@ namespace MyPokedexAPI.Controllers
 
             await _context.UserPokemons.AddAsync(userPokemon);
 
-            // Update TotalPacksOpenedRanking
+            // Ensure there's a TotalPacksOpenedRanking record for the user
             var totalPacksOpenedRanking = await _context.TotalPacksOpenedRankings
                 .FirstOrDefaultAsync(t => t.Id == userId);
-            if (totalPacksOpenedRanking != null)
+            if (totalPacksOpenedRanking == null)
             {
-                totalPacksOpenedRanking.TotalPacksOpened += 1;
-                _context.TotalPacksOpenedRankings.Update(totalPacksOpenedRanking);
+                totalPacksOpenedRanking = new TotalPacksOpenedRanking
+                {
+                    Id = userId,
+                    TotalPacksOpened = 0,
+                    CreatedBy = userId,
+                    CreatedOn = DateTime.UtcNow
+                };
+                await _context.TotalPacksOpenedRankings.AddAsync(totalPacksOpenedRanking);
+            }
+
+            // Update TotalPacksOpenedRanking
+            totalPacksOpenedRanking.TotalPacksOpened += 1;
+            _context.TotalPacksOpenedRankings.Update(totalPacksOpenedRanking);
+
+            // Ensure there's a TotalDiamondPokemonsRanking record for the user
+            var totalDiamondPokemonsRanking = await _context.TotalDiamondPokemonsRankings
+                .FirstOrDefaultAsync(t => t.Id == userId);
+            if (totalDiamondPokemonsRanking == null)
+            {
+                totalDiamondPokemonsRanking = new TotalDiamondPokemonsRanking
+                {
+                    Id = userId,
+                    TotalDiamondPokemons = 0,
+                    CreatedBy = userId,
+                    CreatedOn = DateTime.UtcNow
+                };
+                await _context.TotalDiamondPokemonsRankings.AddAsync(totalDiamondPokemonsRanking);
             }
 
             // Update TotalDiamondPokemonsRanking if necessary
             if (rarity == Rarity.Diamond)
             {
-                var totalDiamondPokemonsRanking = await _context.TotalDiamondPokemonsRankings
-                    .FirstOrDefaultAsync(t => t.Id == userId);
-                if (totalDiamondPokemonsRanking != null)
-                {
-                    totalDiamondPokemonsRanking.TotalDiamondPokemons += 1;
-                    _context.TotalDiamondPokemonsRankings.Update(totalDiamondPokemonsRanking);
-                }
+                totalDiamondPokemonsRanking.TotalDiamondPokemons += 1;
+                _context.TotalDiamondPokemonsRankings.Update(totalDiamondPokemonsRanking);
+            }
+
+            // Save to PackUsers for history
+            var packUser = new PackUsers
+            {
+                UserId = userId,
+                PackId = packId,
+                OpenedOn = DateTime.UtcNow
+            };
+
+            await _context.PackUsers.AddAsync(packUser);
+
+            // Update user's NextOpenExpected if it's a free pack
+            if (isPackFree)
+            {
+                user.NextOpenExpected = DateTime.UtcNow.AddMinutes(3); // Example: next open expected in 3 minutes
+                _context.Users.Update(user);
             }
 
             // Save changes to the database
             await _context.SaveChangesAsync();
 
-            return Ok(new { Pokemon = selectedPokemon.Name, Rarity = rarity.ToString() });
+            // Return result
+            if (isPackFree)
+            {
+                return Ok(new { Pokemon = selectedPokemon.Name, Rarity = rarity.ToString(), NextOpenExpected = user.NextOpenExpected });
+            }
+            else
+            {
+                return Ok(new { Pokemon = selectedPokemon.Name, Rarity = rarity.ToString() });
+            }
+        }
+
+
+
+
+        [HttpGet("GetAllOwnedPokemonsWithFiltersWithPaginationAndSearch")]
+        public async Task<IActionResult> GetAllOwnedPokemonsWithFiltersWithPaginationAndSearch(
+    int userId, int page, int maxRecords, bool isLatest,
+    string? rarityChoosen, // Tornando opcional
+    bool isMostAttackSelected, bool isMostHPSelected,
+    bool isMostDefSelected, bool isMostSpeedSelected,
+    string searchKeyword = "")
+        {
+            var query = _context.UserPokemons
+                .Where(up => up.UserId == userId)
+                .Join(_context.Pokemons,
+                      up => up.PokemonId,
+                      p => p.Id,
+                      (up, p) => new { up, p })
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchKeyword))
+            {
+                searchKeyword = searchKeyword.Trim().ToLower();
+                query = query.Where(up => up.p.Name.ToLower().Contains(searchKeyword));
+            }
+
+            if (!string.IsNullOrEmpty(rarityChoosen))
+            {
+                rarityChoosen = rarityChoosen.ToLower();
+                query = query.Where(up => up.up.Rarity.ToLower() == rarityChoosen);
+            }
+
+            if (isMostAttackSelected)
+            {
+                query = query.OrderByDescending(up => up.up.ActualAttackPoints);
+            }
+            else if (isMostHPSelected)
+            {
+                query = query.OrderByDescending(up => up.up.ActualHealthPoints);
+            }
+            else if (isMostDefSelected)
+            {
+                query = query.OrderByDescending(up => up.up.ActualDefensePoints);
+            }
+            else if (isMostSpeedSelected)
+            {
+                query = query.OrderByDescending(up => up.up.ActualSpeedPoints);
+            }
+            else if (isLatest)
+            {
+                query = query.OrderByDescending(up => up.up.CreatedOn);
+            }
+            else
+            {
+                query = query.OrderBy(up => up.up.CreatedOn);
+            }
+
+            var totalPokemons = await query.CountAsync();
+
+            var pokemons = await query
+                .Skip((page - 1) * maxRecords)
+                .Take(maxRecords)
+                .Select(up => new UserPokemonDTO
+                {
+                    Id = up.up.Id,
+                    UserId = up.up.UserId,
+                    PokemonId = up.up.PokemonId,
+                    PokemonName = up.p.Name,
+                    ActualAttackPoints = up.up.ActualAttackPoints,
+                    ActualHealthPoints = up.up.ActualHealthPoints,
+                    ActualDefensePoints = up.up.ActualDefensePoints,
+                    ActualSpeedPoints = up.up.ActualSpeedPoints,
+                    TotalCombatPoints = up.up.TotalCombatPoints,
+                    Rarity = up.up.Rarity,
+                    PackId = up.up.PackId,
+                    IsFavourite = up.up.IsFavourite,
+                    CreatedOn = up.up.CreatedOn,
+                    CreatedBy = up.up.CreatedBy,
+                    UpdatedOn = up.up.UpdatedOn,
+                    UpdatedBy = up.up.UpdatedBy
+                })
+                .ToListAsync();
+
+            return Ok(new { totalPokemons, pokemons });
         }
     }
 }
