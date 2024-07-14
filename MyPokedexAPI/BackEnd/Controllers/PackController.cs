@@ -50,7 +50,7 @@ namespace MyPokedexAPI.Controllers
         }
 
         [HttpGet("GetPacksWithPaginationAndSearch")]
-        public async Task<IActionResult> GetPacksWithPaginationAndSearch(int page, int maxRecords, string searchKeyword)
+        public async Task<IActionResult> GetPacksWithPaginationAndSearch(int page, int maxRecords, string? searchKeyword = "")
         {
             var query = _context.Packs.AsQueryable();
 
@@ -85,6 +85,7 @@ namespace MyPokedexAPI.Controllers
 
             return Ok(new { totalPacks, packs });
         }
+
 
         [HttpPost("CreateOrUpdatePack")]
         public async Task<IActionResult> CreateOrUpdatePack([FromBody] PackDTO packDto)

@@ -71,23 +71,24 @@ namespace MyPokedexAPI.Models
     }
 
     public class UserPokemonDTO
-    {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public int PokemonId { get; set; }
-        public string PokemonName { get; set; } = string.Empty;
-        public int ActualAttackPoints { get; set; }
-        public int ActualHealthPoints { get; set; }
-        public int ActualDefensePoints { get; set; }
-        public int ActualSpeedPoints { get; set; }
-        public int TotalCombatPoints { get; set; }
-        public string Rarity { get; set; } = string.Empty;
-        public int PackId { get; set; }
-        public bool IsFavourite { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime? UpdatedOn { get; set; }
-        public int? UpdatedBy { get; set; }
-    }
+{
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public int PokemonId { get; set; }
+    public string PokemonName { get; set; }
+    public int ActualAttackPoints { get; set; }
+    public int ActualHealthPoints { get; set; }
+    public int ActualDefensePoints { get; set; }
+    public int ActualSpeedPoints { get; set; }
+    public int TotalCombatPoints { get; set; }
+    public string Rarity { get; set; }
+    public int PackId { get; set; }
+    public bool IsFavourite { get; set; }
+    public DateTime CreatedOn { get; set; }
+    public int CreatedBy { get; set; }
+    public DateTime? UpdatedOn { get; set; }
+    public int? UpdatedBy { get; set; }
+    public string Image { get; set; }  // Nova propriedade para a imagem
+}
 
 }
