@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Telmo\\Desktop\\IPT\\DevWeb\\DevWeb - API\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj": {}
+    "C:\\Users\\Telmo\\Documents\\New\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Telmo\\Desktop\\IPT\\DevWeb\\DevWeb - API\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj": {
+    "C:\\Users\\Telmo\\Documents\\New\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Telmo\\Desktop\\IPT\\DevWeb\\DevWeb - API\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
+        "projectUniqueName": "C:\\Users\\Telmo\\Documents\\New\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
         "projectName": "MyPokedexAPI",
-        "projectPath": "C:\\Users\\Telmo\\Desktop\\IPT\\DevWeb\\DevWeb - API\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
+        "projectPath": "C:\\Users\\Telmo\\Documents\\New\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\MyPokedexAPI.csproj",
         "packagesPath": "C:\\Users\\Telmo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Telmo\\Desktop\\IPT\\DevWeb\\DevWeb - API\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\obj\\",
+        "outputPath": "C:\\Users\\Telmo\\Documents\\New\\DevWebMyPokedex_API\\MyPokedexAPI\\BackEnd\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Telmo\\AppData\\Roaming\\NuGet\\NuGet.Config"

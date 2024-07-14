@@ -22,4 +22,13 @@ namespace MyPokedexAPI.Models
         [ForeignKey("RoleId")]
         public virtual Role Role { get; set; }
     }
+
+    public class UserRoleDTO
+{
+    [Required]
+    public int UserId { get; set; }
+
+    [Required]
+    public int RoleId { get; set; }
+}
 }

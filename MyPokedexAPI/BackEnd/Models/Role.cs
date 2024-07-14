@@ -16,8 +16,7 @@ namespace MyPokedexAPI.Models
         [Required]
         public DateTime CreatedOn { get; set; }
 
-        [Required]
-        public int CreatedBy { get; set; }
+        public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedOn { get; set; }
 
@@ -30,5 +29,20 @@ namespace MyPokedexAPI.Models
         // Navegação para o utilizador que atualizou este role
         [ForeignKey("UpdatedBy")]
         public virtual User UpdatedByUser { get; set; }
+    }
+    public class RoleDTO
+    {
+        [Required]
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Name { get; set; }
+
+
+        public int? CreatedBy { get; set; }
+
+        public int? UpdatedBy { get; set; }
+        public DateTime? UpdatedOn { get; set; }
     }
 }
