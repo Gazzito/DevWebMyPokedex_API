@@ -30,11 +30,11 @@ namespace MyPokedexAPI.Models
 
         // Navegação para o utilizador que criou este ranking
         [ForeignKey("CreatedBy")]
-        public virtual User CreatedByUser { get; set; } = new User();
+        public virtual User CreatedByUser { get; set; }
 
         // Navegação para o utilizador que atualizou este ranking
         [ForeignKey("UpdatedBy")]
-        public virtual User UpdatedByUser { get; set; } = new User();
-        public virtual User User { get; set; } = new User();
+        public virtual User UpdatedByUser { get; set; }
+        public virtual User User { get; set; }
     }
 }

@@ -11,20 +11,20 @@ namespace MyPokedexAPI.Models
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Username { get; set; } = string.Empty;
+        public string Username { get; set; }
  
         [Required]
         [StringLength(100)]
-        public string Password { get; set; } = string.Empty;
+        public string Password { get; set; }
 
         [Required]
         [EmailAddress]
         [StringLength(100)]
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; }
 
         [Required]
         public DateTime CreationDate { get; set; }
@@ -34,20 +34,20 @@ namespace MyPokedexAPI.Models
         [Required]
         public bool IsActive { get; set; }
 
-        public virtual UserProfile UserProfile { get; set; } = new UserProfile();
+        public virtual UserProfile UserProfile { get; set; }
 
-        public virtual TotalDiamondPokemonsRanking TotalDiamondPokemonsRanking { get; set; } = new TotalDiamondPokemonsRanking();
+        public virtual TotalDiamondPokemonsRanking TotalDiamondPokemonsRanking { get; set; }
 
-        public virtual TotalPacksOpenedRanking TotalPacksOpenedRanking { get; set; } = new TotalPacksOpenedRanking();
+        public virtual TotalPacksOpenedRanking TotalPacksOpenedRanking { get; set; }
 
-        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public virtual ICollection<UserRole> UserRoles { get; set; }
 
-        public virtual ICollection<PackUsers> PackUsers { get; set; } = new List<PackUsers>();
+        public virtual ICollection<PackUsers> PackUsers { get; set; } 
 
-        public virtual ICollection<UserPokemons> UserPokemons { get; set; } = new List<UserPokemons>();
+        public virtual ICollection<UserPokemons> UserPokemons { get; set; }
 
-         public virtual ICollection<UserPokemons> UserPokemonsCreatedBy { get; set; } = new List<UserPokemons>();
-         public virtual ICollection<UserPokemons> UserPokemonsUpdatedBy { get; set; } = new List<UserPokemons>();
+         public virtual ICollection<UserPokemons> UserPokemonsCreatedBy { get; set; } 
+         public virtual ICollection<UserPokemons> UserPokemonsUpdatedBy { get; set; }
     }
 
 
@@ -58,20 +58,20 @@ namespace MyPokedexAPI.Models
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; } = string.Empty; 
+        public string Name { get; set; } 
 
         [Required]
         [StringLength(50)]
-        public string Username { get; set; } = string.Empty; 
+        public string Username { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string Password { get; set; } = string.Empty; 
+        public string Password { get; set; }
 
         [Required]
         [EmailAddress]
         [StringLength(100)]
-        public string Email { get; set; } = string.Empty; 
+        public string Email { get; set; } 
 
         [Required]
         public DateTime CreationDate { get; set; }

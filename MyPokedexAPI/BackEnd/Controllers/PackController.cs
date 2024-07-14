@@ -92,54 +92,60 @@ namespace MyPokedexAPI.Controllers
                 return BadRequest();
             }
 
-            var pack = new Pack
+            Pack pack;
+            if (packDto.Id == 0)
             {
-                Id = packDto.Id,
-                Name = packDto.Name,
-                Price = packDto.Price,
-                Image = !string.IsNullOrEmpty(packDto.Image) ? Convert.FromBase64String(packDto.Image) : null,
-                BronzeChance = packDto.BronzeChance,
-                SilverChance = packDto.SilverChance,
-                GoldChance = packDto.GoldChance,
-                PlatinumChance = packDto.PlatinumChance,
-                DiamondChance = packDto.DiamondChance,
-                TotalBought = packDto.TotalBought,
-                CreatedOn = DateTime.SpecifyKind(packDto.CreatedOn, DateTimeKind.Utc),
-                CreatedBy = packDto.CreatedBy,
-                UpdatedOn = packDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(packDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
-                UpdatedBy = packDto.UpdatedBy
-            };
+                pack = new Pack
+                {
+                    Name = packDto.Name,
+                    Price = packDto.Price,
+                    Image = !string.IsNullOrEmpty(packDto.Image) ? Convert.FromBase64String(packDto.Image) : null,
+                    BronzeChance = packDto.BronzeChance,
+                    SilverChance = packDto.SilverChance,
+                    GoldChance = packDto.GoldChance,
+                    PlatinumChance = packDto.PlatinumChance,
+                    DiamondChance = packDto.DiamondChance,
+                    TotalBought = packDto.TotalBought,
+                    CreatedOn = DateTime.SpecifyKind(packDto.CreatedOn, DateTimeKind.Utc),
+                    CreatedBy = packDto.CreatedBy,
+                    UpdatedOn = packDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(packDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
+                    UpdatedBy = packDto.UpdatedBy
+                };
 
-            if (pack.Id == 0)
-            {
                 await _context.Packs.AddAsync(pack);
+                await _context.SaveChangesAsync();
+
+                packDto.Id = pack.Id;
             }
             else
             {
-                var existingPack = await _context.Packs.FindAsync(pack.Id);
-                if (existingPack == null)
+                pack = await _context.Packs.FindAsync(packDto.Id);
+                if (pack == null)
                 {
                     return NotFound();
                 }
 
-                existingPack.Name = pack.Name;
-                existingPack.Price = pack.Price;
-                existingPack.Image = pack.Image;
-                existingPack.BronzeChance = pack.BronzeChance;
-                existingPack.SilverChance = pack.SilverChance;
-                existingPack.GoldChance = pack.GoldChance;
-                existingPack.PlatinumChance = pack.PlatinumChance;
-                existingPack.DiamondChance = pack.DiamondChance;
-                existingPack.TotalBought = pack.TotalBought;
-                existingPack.CreatedOn = pack.CreatedOn;
-                existingPack.CreatedBy = pack.CreatedBy;
-                existingPack.UpdatedOn = pack.UpdatedOn;
-                existingPack.UpdatedBy = pack.UpdatedBy;
+                pack.Name = packDto.Name;
+                pack.Price = packDto.Price;
+                pack.Image = !string.IsNullOrEmpty(packDto.Image) ? Convert.FromBase64String(packDto.Image) : null;
+                pack.BronzeChance = packDto.BronzeChance;
+                pack.SilverChance = packDto.SilverChance;
+                pack.GoldChance = packDto.GoldChance;
+                pack.PlatinumChance = packDto.PlatinumChance;
+                pack.DiamondChance = packDto.DiamondChance;
+                pack.TotalBought = packDto.TotalBought;
+                pack.CreatedOn = DateTime.SpecifyKind(packDto.CreatedOn, DateTimeKind.Utc);
+                pack.CreatedBy = packDto.CreatedBy;
+                pack.UpdatedOn = packDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(packDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null;
+                pack.UpdatedBy = packDto.UpdatedBy;
 
-                _context.Packs.Update(existingPack);
+                _context.Packs.Update(pack);
+                await _context.SaveChangesAsync();
+
+                packDto.Id = pack.Id;
             }
 
-            await _context.SaveChangesAsync();
+            // Retorna o DTO atualizado com o ID do pack criado ou atualizado
             return Ok(packDto);
         }
 

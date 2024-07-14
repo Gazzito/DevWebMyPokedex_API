@@ -12,13 +12,13 @@ namespace MyPokedexAPI.Models
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
 
         [Required]
         public decimal Price { get; set; }
 
         [Required]
-        public byte[]? Image { get; set; } = Array.Empty<byte>();
+        public byte[]? Image { get; set; }
 
         [Required]
         public double BronzeChance { get; set; }
@@ -50,20 +50,20 @@ namespace MyPokedexAPI.Models
 
         // Navegação para o utilizador que criou este pack
         [ForeignKey("CreatedBy")]
-        public virtual User CreatedByUser { get; set; } = new User();
+        public virtual User CreatedByUser { get; set; }
 
         // Navegação para o utilizador que atualizou este pack
         [ForeignKey("UpdatedBy")]
-        public virtual User UpdatedByUser { get; set; } = new User();
+        public virtual User UpdatedByUser { get; set; }
 
         // Coleção de UserPokemons
-        public virtual ICollection<UserPokemons> UserPokemons { get; set; } = new List<UserPokemons>();
+        public virtual ICollection<UserPokemons> UserPokemons { get; set; }
 
         // Coleção de PackUsers
-        public virtual ICollection<PackUsers> PackUsers { get; set; } = new List<PackUsers>();
+        public virtual ICollection<PackUsers> PackUsers { get; set; }
 
         // Coleção de PokemonInPacks
-        public virtual ICollection<PokemonInPack> PokemonInPacks { get; set; } = new List<PokemonInPack>();
+        public virtual ICollection<PokemonInPack> PokemonInPacks { get; set; }
     }
 
      public class PackDTO
@@ -73,12 +73,12 @@ namespace MyPokedexAPI.Models
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
 
         [Required]
         public decimal Price { get; set; }
 
-        public string? Image { get; set; } = string.Empty;
+        public string? Image { get; set; }
 
         [Required]
         public double BronzeChance { get; set; }
@@ -109,6 +109,6 @@ namespace MyPokedexAPI.Models
         public int? UpdatedBy { get; set; }
 
         // Coleção de UserPokemons
-        public virtual ICollection<UserPokemons> UserPokemons { get; set; } = new List<UserPokemons>();
+        public virtual ICollection<UserPokemons>? UserPokemons { get; set; }
     }
 }

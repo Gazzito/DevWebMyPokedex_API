@@ -15,7 +15,7 @@ namespace MyPokedexAPI.Models
 
         [Required]
         [StringLength(200)]
-        public string FullName { get; set; } = string.Empty;
+        public string FullName { get; set; }
 
         [Required]
         public DateTime CreatedOn { get; set; }
@@ -28,14 +28,14 @@ namespace MyPokedexAPI.Models
         public int? UpdatedBy { get; set; }
 
         // Navegação para o utilizador correspondente (1:1)
-        public virtual User User { get; set; } = new User();
+        public virtual User User { get; set; }
 
         // Navegação para o utilizador que criou este perfil
         [ForeignKey("CreatedBy")]
-        public virtual User CreatedByUser { get; set; } = new User();
+        public virtual User CreatedByUser { get; set; }
 
         // Navegação para o utilizador que atualizou este perfil
         [ForeignKey("UpdatedBy")]
-        public virtual User UpdatedByUser { get; set; } = new User();
+        public virtual User UpdatedByUser { get; set; }
     }
 }

@@ -16,10 +16,10 @@ namespace MyPokedexAPI.Models
 
         // Navegação para o utilizador associado
         [ForeignKey("UserId")]
-        public virtual User User { get; set; } = new User();
+        public virtual User User { get; set; }
 
         // Navegação para o role associado
         [ForeignKey("RoleId")]
-        public virtual Role Role { get; set; } = new Role();
+        public virtual Role Role { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace MyPokedexAPI.Models
         public int TotalCombatPoints { get; set; }
 
         [Required]
-        public string Rarity { get; set; } = string.Empty; 
+        public string Rarity { get; set; }
 
         [Required]
         public int PackId { get; set; }
@@ -51,22 +51,22 @@ namespace MyPokedexAPI.Models
 
         // Navegação para o utilizador associado
         [ForeignKey("UserId")]
-        public virtual User User { get; set; } = new User();
+        public virtual User User { get; set; }
 
         // Navegação para o Pokémon associado
         [ForeignKey("PokemonId")]
-        public virtual Pokemon Pokemon { get; set; } = new Pokemon(); 
+        public virtual Pokemon Pokemon { get; set; }
 
         // Navegação para o pack associado
         [ForeignKey("PackId")]
-        public virtual Pack Pack { get; set; } = new Pack();
+        public virtual Pack Pack { get; set; }
 
         // Navegação para o utilizador que criou este registro
         [ForeignKey("CreatedBy")]
-        public virtual User CreatedByUser { get; set; } = new User();
+        public virtual User CreatedByUser { get; set; }
 
         // Navegação para o usuário que atualizou este registro
         [ForeignKey("UpdatedBy")]
-        public virtual User UpdatedByUser { get; set; } = new User();
+        public virtual User UpdatedByUser { get; set; }
     }
 }

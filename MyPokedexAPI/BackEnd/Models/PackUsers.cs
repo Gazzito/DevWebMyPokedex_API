@@ -22,10 +22,10 @@ namespace MyPokedexAPI.Models
 
         // Navegação para o utilizador associado
         [ForeignKey("UserId")]
-        public virtual User User { get; set; } = new User();
+        public virtual User User { get; set; }
 
         // Navegação para o pack associado
         [ForeignKey("PackId")]
-        public virtual Pack Pack { get; set; } = new Pack();
+        public virtual Pack Pack { get; set; }
     }
 }

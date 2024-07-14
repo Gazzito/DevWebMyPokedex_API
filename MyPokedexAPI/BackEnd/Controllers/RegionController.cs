@@ -45,38 +45,43 @@ namespace MyPokedexAPI.Controllers
                 return BadRequest();
             }
 
-            var region = new Region
+            Region region;
+            if (regionDto.Id == 0)
             {
-                Id = regionDto.Id,
-                Name = regionDto.Name,
-                CreatedOn = DateTime.SpecifyKind(regionDto.CreatedOn, DateTimeKind.Utc),
-                CreatedBy = regionDto.CreatedBy,
-                UpdatedOn = regionDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(regionDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
-                UpdatedBy = regionDto.UpdatedBy
-            };
+                region = new Region
+                {
+                    Name = regionDto.Name,
+                    CreatedOn = DateTime.SpecifyKind(regionDto.CreatedOn, DateTimeKind.Utc),
+                    CreatedBy = regionDto.CreatedBy,
+                    UpdatedOn = regionDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(regionDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
+                    UpdatedBy = regionDto.UpdatedBy
+                };
 
-            if (region.Id == 0)
-            {
                 await _context.Regions.AddAsync(region);
+                await _context.SaveChangesAsync();
+
+                regionDto.Id = region.Id;
             }
             else
             {
-                var existingRegion = await _context.Regions.FindAsync(region.Id);
-                if (existingRegion == null)
+                region = await _context.Regions.FindAsync(regionDto.Id);
+                if (region == null)
                 {
                     return NotFound();
                 }
 
-                existingRegion.Name = region.Name;
-                existingRegion.CreatedOn = region.CreatedOn;
-                existingRegion.CreatedBy = region.CreatedBy;
-                existingRegion.UpdatedOn = region.UpdatedOn;
-                existingRegion.UpdatedBy = region.UpdatedBy;
+                region.Name = regionDto.Name;
+                region.CreatedOn = regionDto.CreatedOn;
+                region.CreatedBy = regionDto.CreatedBy;
+                region.UpdatedOn = regionDto.UpdatedOn;
+                region.UpdatedBy = regionDto.UpdatedBy;
 
-                _context.Regions.Update(existingRegion);
+                _context.Regions.Update(region);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
+            // Retorna o DTO atualizado com o ID da nova região criada
+            regionDto.Id = region.Id;
             return Ok(regionDto);
         }
 

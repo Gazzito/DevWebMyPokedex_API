@@ -27,19 +27,19 @@ namespace MyPokedexAPI.Models
 
         // Navegação para o pack associado
         [ForeignKey("PackId")]
-        public virtual Pack Pack { get; set; } = new Pack();
+        public virtual Pack Pack { get; set; }
 
         // Navegação para o Pokémon associado
         [ForeignKey("PokemonId")]
-        public virtual Pokemon Pokemon { get; set; } = new Pokemon();
+        public virtual Pokemon Pokemon { get; set; }
 
         // Navegação para o utilizador que criou este registro
         [ForeignKey("CreatedBy")]
-        public virtual User CreatedByUser { get; set; } = new User();
+        public virtual User CreatedByUser { get; set; }
 
         // Navegação para o utilizador que atualizou este registro
         [ForeignKey("UpdatedBy")]
-        public virtual User UpdatedByUser { get; set; } = new User();
+        public virtual User UpdatedByUser { get; set; }
     }
 
     public class PokemonInPackDTO

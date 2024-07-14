@@ -18,6 +18,34 @@ namespace MyPokedexAPI.Controllers
             _context = context;
         }
 
+
+        [HttpGet("GetPokemonsInPack")]
+        public async Task<IActionResult> GetPokemonsInPack(int packId)
+        {
+            var pokemonsInPack = await _context.PokemonInPacks
+                .Where(pip => pip.PackId == packId)
+                .Include(pip => pip.Pokemon)
+                .Select(pip => new PokemonDTO
+                {
+                    Id = pip.Pokemon.Id,
+                    Name = pip.Pokemon.Name,
+                    RegionId = pip.Pokemon.RegionId,
+                    BaseAttackPoints = pip.Pokemon.BaseAttackPoints,
+                    BaseHealthPoints = pip.Pokemon.BaseHealthPoints,
+                    BaseDefensePoints = pip.Pokemon.BaseDefensePoints,
+                    BaseSpeedPoints = pip.Pokemon.BaseSpeedPoints,
+                    CreatedOn = pip.Pokemon.CreatedOn,
+                    CreatedBy = pip.Pokemon.CreatedBy,
+                    UpdatedOn = pip.Pokemon.UpdatedOn,
+                    UpdatedBy = pip.Pokemon.UpdatedBy,
+                    Image = pip.Pokemon.Image != null ? Convert.ToBase64String(pip.Pokemon.Image) : null
+                })
+                .ToListAsync();
+
+            return Ok(pokemonsInPack);
+        }
+
+
         [HttpPost("CreateOrUpdatePokemonInPack")]
         public async Task<IActionResult> CreateOrUpdatePokemonInPack([FromBody] PokemonInPackDTO pokemonInPackDto)
         {
@@ -26,40 +54,44 @@ namespace MyPokedexAPI.Controllers
                 return BadRequest();
             }
 
-            var pokemonInPack = new PokemonInPack
+            PokemonInPack pokemonInPack;
+            if (pokemonInPackDto.Id == 0)
             {
-                Id = pokemonInPackDto.Id,
-                PackId = pokemonInPackDto.PackId,
-                PokemonId = pokemonInPackDto.PokemonId,
-                CreatedOn = DateTime.SpecifyKind(pokemonInPackDto.CreatedOn, DateTimeKind.Utc),
-                CreatedBy = pokemonInPackDto.CreatedBy,
-                UpdatedOn = pokemonInPackDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(pokemonInPackDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
-                UpdatedBy = pokemonInPackDto.UpdatedBy
-            };
+                pokemonInPack = new PokemonInPack
+                {
+                    PackId = pokemonInPackDto.PackId,
+                    PokemonId = pokemonInPackDto.PokemonId,
+                    CreatedOn = DateTime.SpecifyKind(pokemonInPackDto.CreatedOn, DateTimeKind.Utc),
+                    CreatedBy = pokemonInPackDto.CreatedBy,
+                    UpdatedOn = pokemonInPackDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(pokemonInPackDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
+                    UpdatedBy = pokemonInPackDto.UpdatedBy
+                };
 
-            if (pokemonInPack.Id == 0)
-            {
                 await _context.PokemonInPacks.AddAsync(pokemonInPack);
+                await _context.SaveChangesAsync();
+
+                pokemonInPackDto.Id = pokemonInPack.Id;
             }
             else
             {
-                var existingPokemonInPack = await _context.PokemonInPacks.FindAsync(pokemonInPack.Id);
-                if (existingPokemonInPack == null)
+                pokemonInPack = await _context.PokemonInPacks.FindAsync(pokemonInPackDto.Id);
+                if (pokemonInPack == null)
                 {
                     return NotFound();
                 }
 
-                existingPokemonInPack.PackId = pokemonInPack.PackId;
-                existingPokemonInPack.PokemonId = pokemonInPack.PokemonId;
-                existingPokemonInPack.CreatedOn = pokemonInPack.CreatedOn;
-                existingPokemonInPack.CreatedBy = pokemonInPack.CreatedBy;
-                existingPokemonInPack.UpdatedOn = pokemonInPack.UpdatedOn;
-                existingPokemonInPack.UpdatedBy = pokemonInPack.UpdatedBy;
+                pokemonInPack.PackId = pokemonInPackDto.PackId;
+                pokemonInPack.PokemonId = pokemonInPackDto.PokemonId;
+                pokemonInPack.CreatedOn = DateTime.SpecifyKind(pokemonInPackDto.CreatedOn, DateTimeKind.Utc);
+                pokemonInPack.CreatedBy = pokemonInPackDto.CreatedBy;
+                pokemonInPack.UpdatedOn = pokemonInPackDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(pokemonInPackDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null;
+                pokemonInPack.UpdatedBy = pokemonInPackDto.UpdatedBy;
 
-                _context.PokemonInPacks.Update(existingPokemonInPack);
+                _context.PokemonInPacks.Update(pokemonInPack);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
+            // Retorna o DTO atualizado com o ID do PokemonInPack criado ou atualizado
             return Ok(pokemonInPackDto);
         }
 

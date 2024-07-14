@@ -11,7 +11,7 @@ namespace MyPokedexAPI.Models
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
 
         [Required]
         public DateTime CreatedOn { get; set; }
@@ -25,11 +25,11 @@ namespace MyPokedexAPI.Models
 
         // Navegação para o utilizador que criou esta região
         [ForeignKey("CreatedBy")]
-        public virtual User CreatedByUser { get; set; } = new User();
+        public virtual User CreatedByUser { get; set; }
 
         // Navegação para o utilizador que atualizou esta região
         [ForeignKey("UpdatedBy")]
-        public virtual User UpdatedByUser { get; set; } = new User();
+        public virtual User UpdatedByUser { get; set; }
     }
 
     public class RegionDTO
@@ -39,7 +39,7 @@ namespace MyPokedexAPI.Models
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; } = string.Empty; 
+        public string Name { get; set; }
 
         [Required]
         public DateTime CreatedOn { get; set; }

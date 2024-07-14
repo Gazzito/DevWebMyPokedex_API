@@ -61,50 +61,56 @@ namespace MyPokedexAPI.Controllers
                 return BadRequest();
             }
 
-            var pokemon = new Pokemon
+            Pokemon pokemon;
+            if (pokemonDto.Id == 0)
             {
-                Id = pokemonDto.Id,
-                Name = pokemonDto.Name,
-                RegionId = pokemonDto.RegionId,
-                BaseAttackPoints = pokemonDto.BaseAttackPoints,
-                BaseHealthPoints = pokemonDto.BaseHealthPoints,
-                BaseDefensePoints = pokemonDto.BaseDefensePoints,
-                BaseSpeedPoints = pokemonDto.BaseSpeedPoints,
-                CreatedOn = DateTime.SpecifyKind(pokemonDto.CreatedOn, DateTimeKind.Utc),
-                CreatedBy = pokemonDto.CreatedBy,
-                UpdatedOn = pokemonDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(pokemonDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
-                UpdatedBy = pokemonDto.UpdatedBy,
-                Image = !string.IsNullOrEmpty(pokemonDto.Image) ? Convert.FromBase64String(pokemonDto.Image) : null
-            };
+                pokemon = new Pokemon
+                {
+                    Name = pokemonDto.Name,
+                    RegionId = pokemonDto.RegionId,
+                    BaseAttackPoints = pokemonDto.BaseAttackPoints,
+                    BaseHealthPoints = pokemonDto.BaseHealthPoints,
+                    BaseDefensePoints = pokemonDto.BaseDefensePoints,
+                    BaseSpeedPoints = pokemonDto.BaseSpeedPoints,
+                    CreatedOn = DateTime.SpecifyKind(pokemonDto.CreatedOn, DateTimeKind.Utc),
+                    CreatedBy = pokemonDto.CreatedBy,
+                    UpdatedOn = pokemonDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(pokemonDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
+                    UpdatedBy = pokemonDto.UpdatedBy,
+                    Image = !string.IsNullOrEmpty(pokemonDto.Image) ? Convert.FromBase64String(pokemonDto.Image) : null
+                };
 
-            if (pokemon.Id == 0)
-            {
                 await _context.Pokemons.AddAsync(pokemon);
+                await _context.SaveChangesAsync();
+
+                pokemonDto.Id = pokemon.Id;
             }
             else
             {
-                var existingPokemon = await _context.Pokemons.FindAsync(pokemon.Id);
-                if (existingPokemon == null)
+                pokemon = await _context.Pokemons.FindAsync(pokemonDto.Id);
+                if (pokemon == null)
                 {
                     return NotFound();
                 }
 
-                existingPokemon.Name = pokemon.Name;
-                existingPokemon.RegionId = pokemon.RegionId;
-                existingPokemon.BaseAttackPoints = pokemon.BaseAttackPoints;
-                existingPokemon.BaseHealthPoints = pokemon.BaseHealthPoints;
-                existingPokemon.BaseDefensePoints = pokemon.BaseDefensePoints;
-                existingPokemon.BaseSpeedPoints = pokemon.BaseSpeedPoints;
-                existingPokemon.CreatedOn = pokemon.CreatedOn;
-                existingPokemon.CreatedBy = pokemon.CreatedBy;
-                existingPokemon.UpdatedOn = pokemon.UpdatedOn;
-                existingPokemon.UpdatedBy = pokemon.UpdatedBy;
-                existingPokemon.Image = pokemon.Image;
+                pokemon.Name = pokemonDto.Name;
+                pokemon.RegionId = pokemonDto.RegionId;
+                pokemon.BaseAttackPoints = pokemonDto.BaseAttackPoints;
+                pokemon.BaseHealthPoints = pokemonDto.BaseHealthPoints;
+                pokemon.BaseDefensePoints = pokemonDto.BaseDefensePoints;
+                pokemon.BaseSpeedPoints = pokemonDto.BaseSpeedPoints;
+                pokemon.CreatedOn = DateTime.SpecifyKind(pokemonDto.CreatedOn, DateTimeKind.Utc);
+                pokemon.CreatedBy = pokemonDto.CreatedBy;
+                pokemon.UpdatedOn = pokemonDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(pokemonDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null;
+                pokemon.UpdatedBy = pokemonDto.UpdatedBy;
+                pokemon.Image = !string.IsNullOrEmpty(pokemonDto.Image) ? Convert.FromBase64String(pokemonDto.Image) : null;
 
-                _context.Pokemons.Update(existingPokemon);
+                _context.Pokemons.Update(pokemon);
+                await _context.SaveChangesAsync();
+
+                pokemonDto.Id = pokemon.Id;
             }
 
-            await _context.SaveChangesAsync();
+            // Retorna o DTO atualizado com o ID do Pokémon criado ou atualizado
             return Ok(pokemonDto);
         }
 
@@ -123,41 +129,92 @@ namespace MyPokedexAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("GetMoneyFromPokemon")]
-        public async Task<IActionResult> GetMoneyFromPokemon(int userId, int pokemonId, Rarity pokemonRarity)
+         [HttpGet("GetRandomPokemonInPack")]
+        public async Task<IActionResult> GetRandomPokemonInPack(int packId, int userId)
         {
-            // Find the UserPokemon record
-            var userPokemon = await _context.UserPokemons
-                .FirstOrDefaultAsync(up => up.UserId == userId && up.PokemonId == pokemonId);
-
-            if (userPokemon == null)
+            // Fetch the pack details
+            var pack = await _context.Packs.FindAsync(packId);
+            if (pack == null)
             {
-                return NotFound("Pokemon not found for this user.");
+                return NotFound("Pack not found.");
             }
 
-            // Calculate the sale price based on rarity
-            int salePrice = pokemonRarity switch
+            // Fetch the Pokémons in the pack
+            var pokemonsInPack = await _context.PokemonInPacks
+                .Where(p => p.PackId == packId)
+                .Include(p => p.Pokemon)
+                .ToListAsync();
+
+            if (pokemonsInPack.Count == 0)
             {
-                Rarity.Bronze => 250,
-                Rarity.Silver => 500,
-                Rarity.Gold => 1000,
-                Rarity.Platinum => 2500,
-                Rarity.Diamond => 5000,
-                _ => 0,
+                return NotFound("No Pokémons found in this pack.");
+            }
+
+            // Randomize a Pokémon
+            var random = new Random();
+            var selectedPokemonInPack = pokemonsInPack[random.Next(pokemonsInPack.Count)];
+            var selectedPokemon = selectedPokemonInPack.Pokemon;
+
+            // Randomize rarity
+            double roll = random.NextDouble() * 100;
+            Rarity rarity;
+            if (roll < pack.BronzeChance) rarity = Rarity.Bronze;
+            else if (roll < pack.BronzeChance + pack.SilverChance) rarity = Rarity.Silver;
+            else if (roll < pack.BronzeChance + pack.SilverChance + pack.GoldChance) rarity = Rarity.Gold;
+            else if (roll < pack.BronzeChance + pack.SilverChance + pack.GoldChance + pack.PlatinumChance) rarity = Rarity.Platinum;
+            else rarity = Rarity.Diamond;
+
+            // Adjust stats based on rarity
+            double multiplier = rarity switch
+            {
+                Rarity.Bronze => 2.5,
+                Rarity.Silver => 3.75,
+                Rarity.Gold => 4,
+                Rarity.Platinum => 6,
+                Rarity.Diamond => 10,
+                _ => 1,
             };
 
-            // Remove the UserPokemon record
-            _context.UserPokemons.Remove(userPokemon);
+            var userPokemon = new UserPokemons
+            {
+                UserId = userId,
+                PokemonId = selectedPokemon.Id,
+                ActualAttackPoints = (int)(selectedPokemon.BaseAttackPoints * multiplier),
+                ActualHealthPoints = (int)(selectedPokemon.BaseHealthPoints * multiplier),
+                ActualDefensePoints = (int)(selectedPokemon.BaseDefensePoints * multiplier),
+                ActualSpeedPoints = (int)(selectedPokemon.BaseSpeedPoints * multiplier),
+                TotalCombatPoints = (int)(selectedPokemon.BaseAttackPoints * multiplier +
+                                           selectedPokemon.BaseHealthPoints * multiplier +
+                                           selectedPokemon.BaseDefensePoints * multiplier +
+                                           selectedPokemon.BaseSpeedPoints * multiplier),
+                Rarity = rarity.ToString(),
+                PackId = packId,
+                IsFavourite = false,
+                CreatedOn = DateTime.UtcNow,
+                CreatedBy = userId,
+                UpdatedOn = null,
+                UpdatedBy = null
+            };
 
-            // Update TotalDiamondPokemonsRanking if the pokemon is of Diamond rarity
-            if (pokemonRarity == Rarity.Diamond)
+            await _context.UserPokemons.AddAsync(userPokemon);
+
+            // Update TotalPacksOpenedRanking
+            var totalPacksOpenedRanking = await _context.TotalPacksOpenedRankings
+                .FirstOrDefaultAsync(t => t.Id == userId);
+            if (totalPacksOpenedRanking != null)
+            {
+                totalPacksOpenedRanking.TotalPacksOpened += 1;
+                _context.TotalPacksOpenedRankings.Update(totalPacksOpenedRanking);
+            }
+
+            // Update TotalDiamondPokemonsRanking if necessary
+            if (rarity == Rarity.Diamond)
             {
                 var totalDiamondPokemonsRanking = await _context.TotalDiamondPokemonsRankings
                     .FirstOrDefaultAsync(t => t.Id == userId);
-
                 if (totalDiamondPokemonsRanking != null)
                 {
-                    totalDiamondPokemonsRanking.TotalDiamondPokemons -= 1;
+                    totalDiamondPokemonsRanking.TotalDiamondPokemons += 1;
                     _context.TotalDiamondPokemonsRankings.Update(totalDiamondPokemonsRanking);
                 }
             }
@@ -165,8 +222,7 @@ namespace MyPokedexAPI.Controllers
             // Save changes to the database
             await _context.SaveChangesAsync();
 
-            // Return the sale price
-            return Ok(new { SalePrice = salePrice });
+            return Ok(new { Pokemon = selectedPokemon.Name, Rarity = rarity.ToString() });
         }
     }
 }

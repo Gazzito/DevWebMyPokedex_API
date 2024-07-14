@@ -12,7 +12,7 @@ namespace MyPokedexAPI.Models
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
 
         [Required]
         public int RegionId { get; set; }
@@ -39,22 +39,22 @@ namespace MyPokedexAPI.Models
 
         public int? UpdatedBy { get; set; }
 
-        public byte[]? Image { get; set; } = Array.Empty<byte>();
+        public byte[]? Image { get; set; }
         // Navegação para a região associada
         [ForeignKey("RegionId")]
-        public virtual Region Region { get; set; } = new Region();
+        public virtual Region Region { get; set; }
 
         // Navegação para o utilizador que criou este Pokémon
         [ForeignKey("CreatedBy")]
-        public virtual User CreatedByUser { get; set; } = new User();
+        public virtual User CreatedByUser { get; set; }
 
         // Navegação para o usuário que atualizou este Pokémon
         [ForeignKey("UpdatedBy")]
-        public virtual User UpdatedByUser { get; set; } = new User();
+        public virtual User UpdatedByUser { get; set; }
 
-        public virtual ICollection<PokemonInPack> PokemonInPacks { get; set; } = new List<PokemonInPack>();
+        public virtual ICollection<PokemonInPack> PokemonInPacks { get; set; }
 
-        public virtual ICollection<UserPokemons> UserPokemons { get; set; } = new List<UserPokemons>();
+        public virtual ICollection<UserPokemons> UserPokemons { get; set; }
     }
 
 public class PokemonDTO
@@ -64,7 +64,7 @@ public class PokemonDTO
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; } = string.Empty; 
+        public string Name { get; set; }
 
         [Required]
         public int RegionId { get; set; }
@@ -81,7 +81,7 @@ public class PokemonDTO
         [Required]
         public int BaseSpeedPoints { get; set; }
 
-        public string? Image { get; set; } = string.Empty; 
+        public string? Image { get; set; }
 
         public DateTime CreatedOn { get; set; }
 
