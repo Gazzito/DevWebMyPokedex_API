@@ -596,3 +596,4 @@ C:\Users\Telmo\Documents\New\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\
 C:\Users\Telmo\Documents\New\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.csproj.CopyComplete
 C:\Users\Telmo\Documents\New\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\MyPokedexAPI.genruntimeconfig.cache
 C:\Users\Telmo\Documents\New\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\obj\Debug\net8.0\ref\MyPokedexAPI.dll
+C:\Users\Telmo\Documents\New\DevWebMyPokedex_API\MyPokedexAPI\BackEnd\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

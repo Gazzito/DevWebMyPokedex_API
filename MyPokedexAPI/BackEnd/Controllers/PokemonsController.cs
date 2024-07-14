@@ -4,9 +4,11 @@ using MyPokedexAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MyPokedexAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PokemonsController : ControllerBase
@@ -129,161 +131,180 @@ namespace MyPokedexAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("GetRandomPokemonInPack")]
-        public async Task<IActionResult> GetRandomPokemonInPack(int packId, int userId, bool isPackFree)
+[HttpGet("GetRandomPokemonInPack")]
+public async Task<IActionResult> GetRandomPokemonInPack(int packId, int userId, bool isPackFree)
+{
+    using var transaction = await _context.Database.BeginTransactionAsync();
+    try
+    {
+        // Fetch the pack details
+        var pack = await _context.Packs.FindAsync(packId);
+        if (pack == null)
         {
-            // Fetch the pack details
-            var pack = await _context.Packs.FindAsync(packId);
-            if (pack == null)
+            return NotFound("Pack not found.");
+        }
+
+        // Fetch the user details
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+        {
+            return NotFound("User not found.");
+        }
+
+        if (isPackFree)
+        {
+            // Check the last time the user can open a free pack
+            if (user.NextOpenExpected.HasValue && DateTime.UtcNow < user.NextOpenExpected.Value)
             {
-                return NotFound("Pack not found.");
-            }
-
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
-
-            if (isPackFree)
-            {
-                // Check the last time the user can open a free pack
-                if (user.NextOpenExpected.HasValue && DateTime.UtcNow < user.NextOpenExpected.Value)
-                {
-                    return BadRequest(new { Message = $"You can open the next free pack after {user.NextOpenExpected.Value}.", NextOpenExpected = user.NextOpenExpected });
-                }
-            }
-
-            // Fetch the Pokémons in the pack
-            var pokemonsInPack = await _context.PokemonInPacks
-                .Where(p => p.PackId == packId)
-                .Include(p => p.Pokemon)
-                .ToListAsync();
-
-            if (pokemonsInPack.Count == 0)
-            {
-                return NotFound("No Pokémons found in this pack.");
-            }
-
-            // Randomize a Pokémon
-            var random = new Random();
-            var selectedPokemonInPack = pokemonsInPack[random.Next(pokemonsInPack.Count)];
-            var selectedPokemon = selectedPokemonInPack.Pokemon;
-
-            // Randomize rarity
-            double roll = random.NextDouble() * 100;
-            Rarity rarity;
-            if (roll < pack.BronzeChance) rarity = Rarity.Bronze;
-            else if (roll < pack.BronzeChance + pack.SilverChance) rarity = Rarity.Silver;
-            else if (roll < pack.BronzeChance + pack.SilverChance + pack.GoldChance) rarity = Rarity.Gold;
-            else if (roll < pack.BronzeChance + pack.SilverChance + pack.GoldChance + pack.PlatinumChance) rarity = Rarity.Platinum;
-            else rarity = Rarity.Diamond;
-
-            // Adjust stats based on rarity
-            double multiplier = rarity switch
-            {
-                Rarity.Bronze => 2.5,
-                Rarity.Silver => 3.75,
-                Rarity.Gold => 4,
-                Rarity.Platinum => 6,
-                Rarity.Diamond => 10,
-                _ => 1,
-            };
-
-            var userPokemon = new UserPokemons
-            {
-                UserId = userId,
-                PokemonId = selectedPokemon.Id,
-                ActualAttackPoints = (int)(selectedPokemon.BaseAttackPoints * multiplier),
-                ActualHealthPoints = (int)(selectedPokemon.BaseHealthPoints * multiplier),
-                ActualDefensePoints = (int)(selectedPokemon.BaseDefensePoints * multiplier),
-                ActualSpeedPoints = (int)(selectedPokemon.BaseSpeedPoints * multiplier),
-                TotalCombatPoints = (int)(selectedPokemon.BaseAttackPoints * multiplier +
-                                           selectedPokemon.BaseHealthPoints * multiplier +
-                                           selectedPokemon.BaseDefensePoints * multiplier +
-                                           selectedPokemon.BaseSpeedPoints * multiplier),
-                Rarity = rarity.ToString(),
-                PackId = packId,
-                IsFavourite = false,
-                CreatedOn = DateTime.UtcNow,
-                CreatedBy = userId,
-                UpdatedOn = null,
-                UpdatedBy = null
-            };
-
-            await _context.UserPokemons.AddAsync(userPokemon);
-
-            // Ensure there's a TotalPacksOpenedRanking record for the user
-            var totalPacksOpenedRanking = await _context.TotalPacksOpenedRankings
-                .FirstOrDefaultAsync(t => t.Id == userId);
-            if (totalPacksOpenedRanking == null)
-            {
-                totalPacksOpenedRanking = new TotalPacksOpenedRanking
-                {
-                    Id = userId,
-                    TotalPacksOpened = 0,
-                    CreatedBy = userId,
-                    CreatedOn = DateTime.UtcNow
-                };
-                await _context.TotalPacksOpenedRankings.AddAsync(totalPacksOpenedRanking);
-            }
-
-            // Update TotalPacksOpenedRanking
-            totalPacksOpenedRanking.TotalPacksOpened += 1;
-            _context.TotalPacksOpenedRankings.Update(totalPacksOpenedRanking);
-
-            // Ensure there's a TotalDiamondPokemonsRanking record for the user
-            var totalDiamondPokemonsRanking = await _context.TotalDiamondPokemonsRankings
-                .FirstOrDefaultAsync(t => t.Id == userId);
-            if (totalDiamondPokemonsRanking == null)
-            {
-                totalDiamondPokemonsRanking = new TotalDiamondPokemonsRanking
-                {
-                    Id = userId,
-                    TotalDiamondPokemons = 0,
-                    CreatedBy = userId,
-                    CreatedOn = DateTime.UtcNow
-                };
-                await _context.TotalDiamondPokemonsRankings.AddAsync(totalDiamondPokemonsRanking);
-            }
-
-            // Update TotalDiamondPokemonsRanking if necessary
-            if (rarity == Rarity.Diamond)
-            {
-                totalDiamondPokemonsRanking.TotalDiamondPokemons += 1;
-                _context.TotalDiamondPokemonsRankings.Update(totalDiamondPokemonsRanking);
-            }
-
-            // Save to PackUsers for history
-            var packUser = new PackUsers
-            {
-                UserId = userId,
-                PackId = packId,
-                OpenedOn = DateTime.UtcNow
-            };
-
-            await _context.PackUsers.AddAsync(packUser);
-
-            // Update user's NextOpenExpected if it's a free pack
-            if (isPackFree)
-            {
-                user.NextOpenExpected = DateTime.UtcNow.AddMinutes(3); // Example: next open expected in 3 minutes
-                _context.Users.Update(user);
-            }
-
-            // Save changes to the database
-            await _context.SaveChangesAsync();
-
-            // Return result
-            if (isPackFree)
-            {
-                return Ok(new { Pokemon = selectedPokemon.Name, Rarity = rarity.ToString(), NextOpenExpected = user.NextOpenExpected });
-            }
-            else
-            {
-                return Ok(new { Pokemon = selectedPokemon.Name, Rarity = rarity.ToString() });
+                return BadRequest(new { Message = $"You can open the next free pack after {user.NextOpenExpected.Value}.", NextOpenExpected = user.NextOpenExpected });
             }
         }
+
+        // Fetch the Pokémons in the pack
+        var pokemonsInPack = await _context.PokemonInPacks
+            .Where(p => p.PackId == packId)
+            .Include(p => p.Pokemon)
+            .ToListAsync();
+
+        if (pokemonsInPack.Count == 0)
+        {
+            return NotFound("No Pokémons found in this pack.");
+        }
+
+        // Randomize a Pokémon
+        var random = new Random();
+        var selectedPokemonInPack = pokemonsInPack[random.Next(pokemonsInPack.Count)];
+        var selectedPokemon = selectedPokemonInPack.Pokemon;
+
+        // Randomize rarity
+        double roll = random.NextDouble() * 100;
+        Rarity rarity;
+        if (roll < pack.BronzeChance) rarity = Rarity.Bronze;
+        else if (roll < pack.BronzeChance + pack.SilverChance) rarity = Rarity.Silver;
+        else if (roll < pack.BronzeChance + pack.SilverChance + pack.GoldChance) rarity = Rarity.Gold;
+        else if (roll < pack.BronzeChance + pack.SilverChance + pack.GoldChance + pack.PlatinumChance) rarity = Rarity.Platinum;
+        else rarity = Rarity.Diamond;
+
+        // Adjust stats based on rarity
+        double multiplier = rarity switch
+        {
+            Rarity.Bronze => 2.5,
+            Rarity.Silver => 3.75,
+            Rarity.Gold => 4,
+            Rarity.Platinum => 6,
+            Rarity.Diamond => 10,
+            _ => 1,
+        };
+
+        var userPokemon = new UserPokemons
+        {
+            UserId = userId,
+            PokemonId = selectedPokemon.Id,
+            ActualAttackPoints = (int)(selectedPokemon.BaseAttackPoints * multiplier),
+            ActualHealthPoints = (int)(selectedPokemon.BaseHealthPoints * multiplier),
+            ActualDefensePoints = (int)(selectedPokemon.BaseDefensePoints * multiplier),
+            ActualSpeedPoints = (int)(selectedPokemon.BaseSpeedPoints * multiplier),
+            TotalCombatPoints = (int)(selectedPokemon.BaseAttackPoints * multiplier +
+                                       selectedPokemon.BaseHealthPoints * multiplier +
+                                       selectedPokemon.BaseDefensePoints * multiplier +
+                                       selectedPokemon.BaseSpeedPoints * multiplier),
+            Rarity = rarity.ToString(),
+            PackId = packId,
+            IsFavourite = false,
+            CreatedOn = DateTime.UtcNow,
+            CreatedBy = userId,
+            UpdatedOn = null,
+            UpdatedBy = null
+        };
+
+        await _context.UserPokemons.AddAsync(userPokemon);
+
+        // Ensure there's a TotalPacksOpenedRanking record for the user
+        var totalPacksOpenedRanking = await _context.TotalPacksOpenedRankings
+            .SingleOrDefaultAsync(t => t.Id == userId);
+        if (totalPacksOpenedRanking == null)
+        {
+            totalPacksOpenedRanking = new TotalPacksOpenedRanking
+            {
+                Id = userId,
+                TotalPacksOpened = 0,
+                CreatedBy = userId,
+                CreatedOn = DateTime.UtcNow
+            };
+            await _context.TotalPacksOpenedRankings.AddAsync(totalPacksOpenedRanking);
+        }
+        else
+        {
+            totalPacksOpenedRanking.TotalPacksOpened += 1;
+            _context.TotalPacksOpenedRankings.Update(totalPacksOpenedRanking);
+        }
+
+        // Ensure there's a TotalDiamondPokemonsRanking record for the user
+        var totalDiamondPokemonsRanking = await _context.TotalDiamondPokemonsRankings
+            .SingleOrDefaultAsync(t => t.Id == userId);
+        if (totalDiamondPokemonsRanking == null)
+        {
+            totalDiamondPokemonsRanking = new TotalDiamondPokemonsRanking
+            {
+                Id = userId,
+                TotalDiamondPokemons = 0,
+                CreatedBy = userId,
+                CreatedOn = DateTime.UtcNow
+            };
+            await _context.TotalDiamondPokemonsRankings.AddAsync(totalDiamondPokemonsRanking);
+        }
+        else if (rarity == Rarity.Diamond)
+        {
+            totalDiamondPokemonsRanking.TotalDiamondPokemons += 1;
+            _context.TotalDiamondPokemonsRankings.Update(totalDiamondPokemonsRanking);
+        }
+
+        // Save to PackUsers for history
+        var packUser = new PackUsers
+        {
+            UserId = userId,
+            PackId = packId,
+            OpenedOn = DateTime.UtcNow
+        };
+
+        await _context.PackUsers.AddAsync(packUser);
+
+        // Update user's NextOpenExpected if it's a free pack
+        if (isPackFree)
+        {
+            user.NextOpenExpected = DateTime.UtcNow.AddMinutes(3); // Example: next open expected in 3 minutes
+            _context.Users.Update(user);
+        }
+
+        // Save changes to the database
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        // Return result
+        if (isPackFree)
+        {
+            return Ok(new { Pokemon = selectedPokemon.Name, Rarity = rarity.ToString(), NextOpenExpected = user.NextOpenExpected });
+        }
+        else
+        {
+            return Ok(new { Pokemon = selectedPokemon.Name, Rarity = rarity.ToString() });
+        }
+    }
+    catch (DbUpdateConcurrencyException ex)
+    {
+        await transaction.RollbackAsync();
+        return Conflict(new { Message = "A concurrency error occurred. Please try again.", Details = ex.Message });
+    }
+    catch (Exception ex)
+    {
+        await transaction.RollbackAsync();
+        return StatusCode(500, $"Internal server error: {ex.Message}");
+    }
+}
+
+
+
+
 
 
 
