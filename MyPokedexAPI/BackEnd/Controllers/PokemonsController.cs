@@ -1,41 +1,41 @@
-using Microsoft.AspNetCore.Mvc;
-using MyPokedexAPI.Data;
-using MyPokedexAPI.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;  // Importa o namespace para funcionalidades do MVC no ASP.NET Core
+using MyPokedexAPI.Data;  // Importa o namespace para acesso ao contexto da base de dados
+using MyPokedexAPI.Models;  // Importa o namespace para os modelos da aplicação
+using Microsoft.EntityFrameworkCore;  // Importa o namespace para funcionalidades do Entity Framework Core
+using System.Linq;  // Importa o namespace para funcionalidades de consultas LINQ
+using System.Threading.Tasks;  // Importa o namespace para funcionalidades assíncronas
+using Microsoft.AspNetCore.Authorization;  // Importa o namespace para funcionalidades de autorização
 
-namespace MyPokedexAPI.Controllers
+namespace MyPokedexAPI.Controllers  // Define o namespace para o controlador da API
 {
-    [Authorize]
-    [ApiController]
-    [Route("api/[controller]")]
-    public class PokemonsController : ControllerBase
+    [Authorize]  // Indica que este controlador requer autorização
+    [ApiController]  // Indica que esta classe é um controlador de API
+    [Route("api/[controller]")]  // Define a rota para aceder a este controlador
+    public class PokemonsController : ControllerBase  // Define a classe PokemonsController que herda de ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;  // Campo para o contexto da base de dados
 
-        public PokemonsController(ApplicationDbContext context)
+        public PokemonsController(ApplicationDbContext context)  // Construtor que inicializa o campo _context
         {
             _context = context;
         }
 
-        [HttpGet("GetAllPaginatedPokemonsWithPaginationAndSearch")]
-        public async Task<IActionResult> GetAllPaginatedPokemonsWithPaginationAndSearch(int page, int maxRecords, string searchKeyword)
+        [HttpGet("GetAllPaginatedPokemonsWithPaginationAndSearch")]  // Define um endpoint HTTP GET na rota "GetAllPaginatedPokemonsWithPaginationAndSearch"
+        public async Task<IActionResult> GetAllPaginatedPokemonsWithPaginationAndSearch(int page, int maxRecords, string searchKeyword)  // Método para obter todos os Pokémons com paginação e pesquisa
         {
-            var query = _context.Pokemons.AsQueryable();
+            var query = _context.Pokemons.AsQueryable();  // Cria uma consulta inicial para os Pokémons
 
-            if (!string.IsNullOrEmpty(searchKeyword))
+            if (!string.IsNullOrEmpty(searchKeyword))  // Se a palavra-chave de pesquisa não estiver vazia
             {
-                searchKeyword = searchKeyword.Trim().ToLower();
-                query = query.Where(p => p.Name.ToLower().Contains(searchKeyword));
+                searchKeyword = searchKeyword.Trim().ToLower();  // Remove espaços em branco e converte para minúsculas
+                query = query.Where(p => p.Name.ToLower().Contains(searchKeyword));  // Filtra os Pokémons pelo nome
             }
 
-            var totalPokemons = await query.CountAsync();
-            var pokemons = await query
-                .Skip((page - 1) * maxRecords)
-                .Take(maxRecords)
-                .Select(p => new PokemonDTO
+            var totalPokemons = await query.CountAsync();  // Conta o total de Pokémons
+            var pokemons = await query  // Consulta para obter os Pokémons com paginação
+                .Skip((page - 1) * maxRecords)  // Pula os Pokémons das páginas anteriores
+                .Take(maxRecords)  // Toma o número máximo de Pokémons para a página atual
+                .Select(p => new PokemonDTO  // Projeta os resultados para o DTO
                 {
                     Id = p.Id,
                     Name = p.Name,
@@ -48,23 +48,23 @@ namespace MyPokedexAPI.Controllers
                     CreatedBy = p.CreatedBy,
                     UpdatedOn = p.UpdatedOn,
                     UpdatedBy = p.UpdatedBy,
-                    Image = p.Image != null ? Convert.ToBase64String(p.Image) : null
+                    Image = p.Image != null ? Convert.ToBase64String(p.Image) : null  // Converte a imagem para base64, se existir
                 })
-                .ToListAsync();
+                .ToListAsync();  // Converte o resultado para uma lista de forma assíncrona
 
-            return Ok(new { totalPokemons, pokemons });
+            return Ok(new { totalPokemons, pokemons });  // Retorna o total de Pokémons e os Pokémons da página atual
         }
 
-        [HttpPost("CreateOrUpdatePokemon")]
-        public async Task<IActionResult> CreateOrUpdatePokemon([FromBody] PokemonDTO pokemonDto)
+        [HttpPost("CreateOrUpdatePokemon")]  // Define um endpoint HTTP POST na rota "CreateOrUpdatePokemon"
+        public async Task<IActionResult> CreateOrUpdatePokemon([FromBody] PokemonDTO pokemonDto)  // Método para criar ou atualizar um Pokémon
         {
-            if (pokemonDto == null)
+            if (pokemonDto == null)  // Verifica se o DTO do Pokémon é nulo
             {
-                return BadRequest();
+                return BadRequest();  // Retorna um erro de pedido inválido
             }
 
             Pokemon pokemon;
-            if (pokemonDto.Id == 0)
+            if (pokemonDto.Id == 0)  // Se o ID do Pokémon for zero, cria um novo Pokémon
             {
                 pokemon = new Pokemon
                 {
@@ -78,20 +78,20 @@ namespace MyPokedexAPI.Controllers
                     CreatedBy = pokemonDto.CreatedBy,
                     UpdatedOn = pokemonDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(pokemonDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null,
                     UpdatedBy = pokemonDto.UpdatedBy,
-                    Image = !string.IsNullOrEmpty(pokemonDto.Image) ? Convert.FromBase64String(pokemonDto.Image) : null
+                    Image = !string.IsNullOrEmpty(pokemonDto.Image) ? Convert.FromBase64String(pokemonDto.Image) : null  // Converte a imagem de base64, se existir
                 };
 
-                await _context.Pokemons.AddAsync(pokemon);
-                await _context.SaveChangesAsync();
+                await _context.Pokemons.AddAsync(pokemon);  // Adiciona o novo Pokémon ao contexto
+                await _context.SaveChangesAsync();  // Salva as alterações na base de dados
 
-                pokemonDto.Id = pokemon.Id;
+                pokemonDto.Id = pokemon.Id;  // Atualiza o ID no DTO
             }
-            else
+            else  // Se o ID do Pokémon não for zero, atualiza um Pokémon existente
             {
-                pokemon = await _context.Pokemons.FindAsync(pokemonDto.Id);
-                if (pokemon == null)
+                pokemon = await _context.Pokemons.FindAsync(pokemonDto.Id);  // Procura o Pokémon na base de dados
+                if (pokemon == null)  // Se o Pokémon não for encontrado
                 {
-                    return NotFound();
+                    return NotFound();  // Retorna um erro de não encontrado
                 }
 
                 pokemon.Name = pokemonDto.Name;
@@ -104,63 +104,63 @@ namespace MyPokedexAPI.Controllers
                 pokemon.CreatedBy = pokemonDto.CreatedBy;
                 pokemon.UpdatedOn = pokemonDto.UpdatedOn.HasValue ? DateTime.SpecifyKind(pokemonDto.UpdatedOn.Value, DateTimeKind.Utc) : (DateTime?)null;
                 pokemon.UpdatedBy = pokemonDto.UpdatedBy;
-                pokemon.Image = !string.IsNullOrEmpty(pokemonDto.Image) ? Convert.FromBase64String(pokemonDto.Image) : null;
+                pokemon.Image = !string.IsNullOrEmpty(pokemonDto.Image) ? Convert.FromBase64String(pokemonDto.Image) : null;  // Converte a imagem de base64, se existir
 
-                _context.Pokemons.Update(pokemon);
-                await _context.SaveChangesAsync();
+                _context.Pokemons.Update(pokemon);  // Atualiza o Pokémon no contexto
+                await _context.SaveChangesAsync();  // Salva as alterações na base de dados
 
-                pokemonDto.Id = pokemon.Id;
+                pokemonDto.Id = pokemon.Id;  // Atualiza o ID no DTO
             }
 
             // Retorna o DTO atualizado com o ID do Pokémon criado ou atualizado
             return Ok(pokemonDto);
         }
 
-        [HttpDelete("DeletePokemon/{id}")]
-        public async Task<IActionResult> DeletePokemon(int id)
+        [HttpDelete("DeletePokemon/{id}")]  // Define um endpoint HTTP DELETE na rota "DeletePokemon/{id}"
+        public async Task<IActionResult> DeletePokemon(int id)  // Método para deletar um Pokémon
         {
-            var pokemon = await _context.Pokemons.FindAsync(id);
-            if (pokemon == null)
+            var pokemon = await _context.Pokemons.FindAsync(id);  // Procura o Pokémon na base de dados
+            if (pokemon == null)  // Se o Pokémon não for encontrado
             {
-                return NotFound();
+                return NotFound();  // Retorna um erro de não encontrado
             }
 
-            _context.Pokemons.Remove(pokemon);
-            await _context.SaveChangesAsync();
+            _context.Pokemons.Remove(pokemon);  // Remove o Pokémon do contexto
+            await _context.SaveChangesAsync();  // Salva as alterações na base de dados
 
-            return Ok();
+            return Ok();  // Retorna uma resposta de sucesso
         }
 
-        [HttpGet("GetRandomPokemonInPack")]
-        public async Task<IActionResult> GetRandomPokemonInPack(int packId, int userId, bool isPackFree)
+        [HttpGet("GetRandomPokemonInPack")]  // Define um endpoint HTTP GET na rota "GetRandomPokemonInPack"
+        public async Task<IActionResult> GetRandomPokemonInPack(int packId, int userId, bool isPackFree)  // Método para obter um Pokémon aleatório de um pack
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync();  // Inicia uma transação
             try
             {
-                // Fetch the pack details
+                // Busca os detalhes do pack
                 var pack = await _context.Packs.FindAsync(packId);
                 if (pack == null)
                 {
-                    return NotFound("Pack not found.");
+                    return NotFound("Pack not found.");  // Retorna um erro se o pack não for encontrado
                 }
 
-                // Fetch the user details
+                // Busca os detalhes do utilizador
                 var user = await _context.Users.FindAsync(userId);
                 if (user == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound("User not found.");  // Retorna um erro se o utilizador não for encontrado
                 }
 
                 if (isPackFree)
                 {
-                    // Check the last time the user can open a free pack
+                    // Verifica a última vez que o utilizador pode abrir um pack gratuito
                     if (user.NextOpenExpected.HasValue && DateTime.UtcNow < user.NextOpenExpected.Value)
                     {
                         return BadRequest(new { Message = $"You can open the next free pack after {user.NextOpenExpected.Value}.", NextOpenExpected = user.NextOpenExpected });
                     }
                 }
 
-                // Fetch the Pokémons in the pack
+                // Busca os Pokémons no pack
                 var pokemonsInPack = await _context.PokemonInPacks
                     .Where(p => p.PackId == packId)
                     .Include(p => p.Pokemon)
@@ -168,15 +168,15 @@ namespace MyPokedexAPI.Controllers
 
                 if (pokemonsInPack.Count == 0)
                 {
-                    return NotFound("No Pokémons found in this pack.");
+                    return NotFound("No Pokémons found in this pack.");  // Retorna um erro se não houver Pokémons no pack
                 }
 
-                // Randomize a Pokémon
+                // Aleatoriza um Pokémon
                 var random = new Random();
                 var selectedPokemonInPack = pokemonsInPack[random.Next(pokemonsInPack.Count)];
                 var selectedPokemon = selectedPokemonInPack.Pokemon;
 
-                // Randomize rarity
+                // Aleatoriza a raridade
                 double roll = random.NextDouble() * 100;
                 Rarity rarity;
                 if (roll < pack.BronzeChance) rarity = Rarity.Bronze;
@@ -185,7 +185,7 @@ namespace MyPokedexAPI.Controllers
                 else if (roll < pack.BronzeChance + pack.SilverChance + pack.GoldChance + pack.PlatinumChance) rarity = Rarity.Platinum;
                 else rarity = Rarity.Diamond;
 
-                // Adjust stats based on rarity
+                // Ajusta as estatísticas com base na raridade
                 double multiplier = rarity switch
                 {
                     Rarity.Bronze => 2.5,
@@ -217,9 +217,9 @@ namespace MyPokedexAPI.Controllers
                     UpdatedBy = null
                 };
 
-                await _context.UserPokemons.AddAsync(userPokemon);
+                await _context.UserPokemons.AddAsync(userPokemon);  // Adiciona o Pokémon do utilizador ao contexto
 
-                // Ensure there's a TotalPacksOpenedRanking record for the user
+                // Garante que há um registo de TotalPacksOpenedRanking para o utilizador
                 var totalPacksOpenedRanking = await _context.TotalPacksOpenedRankings
                     .SingleOrDefaultAsync(t => t.Id == userId);
                 if (totalPacksOpenedRanking == null)
@@ -239,7 +239,7 @@ namespace MyPokedexAPI.Controllers
                     _context.TotalPacksOpenedRankings.Update(totalPacksOpenedRanking);
                 }
 
-                // Ensure there's a TotalDiamondPokemonsRanking record for the user
+                // Garante que há um registo de TotalDiamondPokemonsRanking para o utilizador
                 var totalDiamondPokemonsRanking = await _context.TotalDiamondPokemonsRankings
                     .SingleOrDefaultAsync(t => t.Id == userId);
                 if (totalDiamondPokemonsRanking == null)
@@ -259,7 +259,7 @@ namespace MyPokedexAPI.Controllers
                     _context.TotalDiamondPokemonsRankings.Update(totalDiamondPokemonsRanking);
                 }
 
-                // Save to PackUsers for history
+                // Salva o histórico de packs abertos pelo utilizador
                 var packUser = new PackUsers
                 {
                     UserId = userId,
@@ -269,22 +269,22 @@ namespace MyPokedexAPI.Controllers
 
                 await _context.PackUsers.AddAsync(packUser);
 
-                // Update the TotalBought of the pack
+                // Atualiza o total de packs comprados
                 pack.TotalBought += 1;
                 _context.Packs.Update(pack);
 
-                // Update user's NextOpenExpected if it's a free pack
+                // Atualiza o NextOpenExpected do utilizador se for um pack gratuito
                 if (isPackFree)
                 {
-                    user.NextOpenExpected = DateTime.UtcNow.AddMinutes(3); // Example: next open expected in 3 minutes
+                    user.NextOpenExpected = DateTime.UtcNow.AddMinutes(3); // Exemplo: próximo pack gratuito em 3 minutos
                     _context.Users.Update(user);
                 }
 
-                // Save changes to the database
+                // Salva as alterações na base de dados
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                // Return result
+                // Retorna o resultado
                 if (isPackFree)
                 {
                     return Ok(new { Pokemon = selectedPokemon.Name, Rarity = rarity.ToString(), Image = selectedPokemon.Image != null ? Convert.ToBase64String(selectedPokemon.Image) : null, NextOpenExpected = user.NextOpenExpected });
@@ -296,86 +296,75 @@ namespace MyPokedexAPI.Controllers
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                await transaction.RollbackAsync();
+                await transaction.RollbackAsync();  // Reverte a transação em caso de erro de concorrência
                 return Conflict(new { Message = "A concurrency error occurred. Please try again.", Details = ex.Message });
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                await transaction.RollbackAsync();  // Reverte a transação em caso de erro
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-        [HttpGet("GetAllOwnedPokemonsWithFiltersWithPaginationAndSearch")]
-        public async Task<IActionResult> GetAllOwnedPokemonsWithFiltersWithPaginationAndSearch(
-    int userId, int page, int maxRecords, bool isLatest,
-    string? rarityChoosen, // Tornando opcional
-    bool isMostAttackSelected, bool isMostHPSelected,
-    bool isMostDefSelected, bool isMostSpeedSelected,
-    string searchKeyword = "")
+        [HttpGet("GetAllOwnedPokemonsWithFiltersWithPaginationAndSearch")]  // Define um endpoint HTTP GET na rota "GetAllOwnedPokemonsWithFiltersWithPaginationAndSearch"
+        public async Task<IActionResult> GetAllOwnedPokemonsWithFiltersWithPaginationAndSearch(  // Método para obter todos os Pokémons do utilizador com filtros, paginação e pesquisa
+            int userId, int page, int maxRecords, bool isLatest,
+            string? rarityChoosen,  // Tornando opcional
+            bool isMostAttackSelected, bool isMostHPSelected,
+            bool isMostDefSelected, bool isMostSpeedSelected,
+            string searchKeyword = "")
         {
             var query = _context.UserPokemons
-                .Where(up => up.UserId == userId)
-                .Join(_context.Pokemons,
+                .Where(up => up.UserId == userId)  // Filtra os Pokémons pelo ID do utilizador
+                .Join(_context.Pokemons,  // Junta os Pokémons do utilizador com os Pokémons
                       up => up.PokemonId,
                       p => p.Id,
                       (up, p) => new { up, p })
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(searchKeyword))
+            if (!string.IsNullOrEmpty(searchKeyword))  // Se a palavra-chave de pesquisa não estiver vazia
             {
-                searchKeyword = searchKeyword.Trim().ToLower();
-                query = query.Where(up => up.p.Name.ToLower().Contains(searchKeyword));
+                searchKeyword = searchKeyword.Trim().ToLower();  // Remove espaços em branco e converte para minúsculas
+                query = query.Where(up => up.p.Name.ToLower().Contains(searchKeyword));  // Filtra os Pokémons pelo nome
             }
 
-            if (!string.IsNullOrEmpty(rarityChoosen))
+            if (!string.IsNullOrEmpty(rarityChoosen))  // Se a raridade escolhida não estiver vazia
             {
                 rarityChoosen = rarityChoosen.ToLower();
-                query = query.Where(up => up.up.Rarity.ToLower() == rarityChoosen);
+                query = query.Where(up => up.up.Rarity.ToLower() == rarityChoosen);  // Filtra os Pokémons pela raridade
             }
 
             if (isMostAttackSelected)
             {
-                query = query.OrderByDescending(up => up.up.ActualAttackPoints);
+                query = query.OrderByDescending(up => up.up.ActualAttackPoints);  // Ordena por pontos de ataque em ordem decrescente
             }
             else if (isMostHPSelected)
             {
-                query = query.OrderByDescending(up => up.up.ActualHealthPoints);
+                query = query.OrderByDescending(up => up.up.ActualHealthPoints);  // Ordena por pontos de vida em ordem decrescente
             }
             else if (isMostDefSelected)
             {
-                query = query.OrderByDescending(up => up.up.ActualDefensePoints);
+                query = query.OrderByDescending(up => up.up.ActualDefensePoints);  // Ordena por pontos de defesa em ordem decrescente
             }
             else if (isMostSpeedSelected)
             {
-                query = query.OrderByDescending(up => up.up.ActualSpeedPoints);
+                query = query.OrderByDescending(up => up.up.ActualSpeedPoints);  // Ordena por pontos de velocidade em ordem decrescente
             }
             else if (isLatest)
             {
-                query = query.OrderByDescending(up => up.up.CreatedOn);
+                query = query.OrderByDescending(up => up.up.CreatedOn);  // Ordena pela data de criação em ordem decrescente
             }
             else
             {
-                query = query.OrderBy(up => up.up.CreatedOn);
+                query = query.OrderBy(up => up.up.CreatedOn);  // Ordena pela data de criação em ordem crescente
             }
 
-            var totalPokemons = await query.CountAsync();
+            var totalPokemons = await query.CountAsync();  // Conta o total de Pokémons
 
             var pokemons = await query
-                .Skip((page - 1) * maxRecords)
-                .Take(maxRecords)
-                .Select(up => new UserPokemonDTO
+                .Skip((page - 1) * maxRecords)  // Pula os Pokémons das páginas anteriores
+                .Take(maxRecords)  // Toma o número máximo de Pokémons para a página atual
+                .Select(up => new UserPokemonDTO  // Projeta os resultados para o DTO
                 {
                     Id = up.up.Id,
                     UserId = up.up.UserId,
@@ -395,10 +384,9 @@ namespace MyPokedexAPI.Controllers
                     UpdatedBy = up.up.UpdatedBy,
                     Image = up.p.Image != null ? Convert.ToBase64String(up.p.Image) : null  // Adiciona a imagem codificada em base64
                 })
-                .ToListAsync();
+                .ToListAsync();  // Converte o resultado para uma lista de forma assíncrona
 
-            return Ok(new { totalPokemons, pokemons });
+            return Ok(new { totalPokemons, pokemons });  // Retorna o total de Pokémons e os Pokémons da página atual
         }
-
     }
 }
